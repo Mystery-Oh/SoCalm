@@ -1,2 +1,2 @@
-# So_Calm
+# SoCalm
 Repository for CBNU OpenSourceBasicProject
