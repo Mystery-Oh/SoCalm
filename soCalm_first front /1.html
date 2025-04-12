@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>보행자 안전도 평가 지도</title>
+  <link rel="stylesheet" href="style.css"> <!-- 스타일 분리 가능 -->
+</head>
+<body>
+  <header>
+    <h1>보행자 안전도 평가 지도</h1>
+    <nav>
+      <ul>
+        <li><a href="#map">지도 보기</a></li>
+        <li><a href="#report">제보하기</a></li>
+        <li><a href="#about">소개</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="map">
+      <h2>지도</h2>
+      <div id="map-container">
+        <!-- 지도 API (예: 카카오맵, 구글맵 등) 삽입 예정 -->
+      </div>
+    </section>
+
+    <section id="report">
+      <h2>위험지역 제보</h2>
+      <form>
+        <label>위치명: <input type="text" name="location"></label><br>
+        <label>설명: <textarea name="description"></textarea></label><br>
+        <button type="submit">제보하기</button>
+      </form>
+    </section>
+
+    <section id="about">
+      <h2>프로젝트 소개</h2>
+      <p>보행자 안전을 위한 정보 공유 지도입니다. 사용자 참여를 통해 위험 지역을 함께 표시합니다.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 보행자 안전도 평가 프로젝트</p>
+  </footer>
+</body>
+</html>
