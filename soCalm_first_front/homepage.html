@@ -1,56 +1,58 @@
 <!DOCTYPE html>
- <html lang="ko">
- <head>
-   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <title>보행자 안전도 평가 지도</title>
-   <link rel="stylesheet" href="style.css">
-   <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey="></script>
-   <style>
-     #map-container {
-       width: 100%;
-       height: 500px;
-       margin-bottom: 2rem;
-     }
-   </style>
- </head>
- <body>
-   <header>
-     <div class="navigation">
-       <ul>
-         <li><a href="map.html ">지도 보기</a></li>
-         <li><a href="report.html">제보하기</a></li>
-         <li><a href="about.html">소개</a></li>
-       </ul>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>보행자 안전도 평가 지도</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey="></script>
+</head>
+
+<body>
+  <header>
+    <div class="header-container">
+    <div id="socalm">
+      <h3>"이미지삽입(화면 누르면 홈화면으로 초기화)"</h3></div>
+    <div class="navigation">
+      <ul>
+        <li><a href="map.html">추가기능1</a></li>
+        <li><a href="report.html">추가기능2</a></li>
+        <li><a href="about.html">추가기능3</a></li>
+      </ul>
+    </div>
+   </div>
+  </header>
+
+  <main>
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+      <div id="map" style="flex: 2;">
+        <h2>지도</h2>
+        <div id="map-container"></div>
       </div>
-   </header>
 
-   <main>
-     <section id="map">
-       <h2>지도</h2>
-       <div id="map-container"></div>
-     </section>
+      <div id="report" style="flex: 1;">
+        <h2>위험지역 제보</h2>
+        <form id="report-form" action="/report" method="post">
+          <label>위치명: <input type="text" name="location"></label><br>
+          <label>설명: <textarea name="description"></textarea></label><br>  
+          <button type="submit">제보하기</button>
+          <button type="button" id="cancel-report">취소하기</button>
+        </form>
+      </div>
+    </div>
 
-     <section id="report">
-       <h2>위험지역 제보</h2>
-       <form action="/report" method="post">
-         <label>위치명: <input type="text" name="location"></label><br>
-         <label>설명: <input name="description"></input></label><br>  
-         <button type="submit">제보하기</button>
-         <button type="button" id="Cancel">취소하기</button>
-       </form>
-     </section>
+    <section id="about">
+      <h2>SoCalm</h2>
+      <p>This project is an open source project. Our team is composed of members from the Department of Computer Engineering and the Department of Software.</p>
+      <br>
+      <p style="font-size: 13px;">developers: (Oh-heeseung, Leejungjoo, Jang hyun gyu)</p>
+    </section>
+  </main>
 
-     <section id="about">
-       <h2>프로젝트 소개</h2>
-       <p>보행자 안전을 위한 정보 공유 지도입니다. 사용자 참여를 통해 위험 지역을 함께 표시합니다.</p>
-     </section>
-   </main>
+  <footer>
+    <p>&copy; 2025 보행자 안전도 평가 프로젝트</p>
+  </footer>
 
-   <footer>
-     <p>&copy; 2025 보행자 안전도 평가 프로젝트</p>
-   </footer>
-
-   <script>
+  <script>
     let map = new Tmapv2.Map("map-container", {
       center: new Tmapv2.LatLng(36.6256, 127.4545),
       width: "100%",
@@ -58,62 +60,58 @@
       zoom: 16
     });
 
-    let currentMarker = null;
-    let currentInfoWindow = null;
+    const markers = [];
+    const infoWindows = [];
 
     map.addListener("click", function (evt) {
       const lat = evt.latLng._lat;
       const lon = evt.latLng._lng;
 
-      const locationName = document.querySelector("input[name='location']").value;
-      const description = document.querySelector("textarea[name='description']").value;
+      const locationName = document.querySelector("input[name='location']").value.trim();
+      const description = document.querySelector("textarea[name='description']").value.trim();
 
       if (!locationName || !description) {
         alert("위치명과 설명을 입력한 후 지도를 클릭해주세요.");
         return;
       }
 
-      if (currentMarker) {
-        currentMarker.setMap(null);
-        currentMarker = null;
-      }
-      if (currentInfoWindow) {
-        currentInfoWindow.setMap(null);
-        currentInfoWindow = null;
-      }
-
-      currentMarker = new Tmapv2.Marker({
+      const marker = new Tmapv2.Marker({
         position: new Tmapv2.LatLng(lat, lon),
         map: map
       });
+      markers.push(marker);
 
-      currentInfoWindow = new Tmapv2.InfoWindow({
+      const infoWindow = new Tmapv2.InfoWindow({
         position: new Tmapv2.LatLng(lat, lon),
         content: `<div style="background:white;padding:5px;border-radius:5px"><strong>${locationName}</strong><br>${description}</div>`,
         type: 2,
         map: map
       });
+      infoWindows.push(infoWindow);
 
       map.setCenter(new Tmapv2.LatLng(lat, lon));
+
+      document.getElementById("report-form").reset();
     });
 
     document.getElementById("report-form").addEventListener("submit", function (e) {
       e.preventDefault();
-      alert("이제 지도를 클릭하여 제보 위치를 선택하세요.");
+      alert("왼쪽 지도를 클릭하여 제보 위치를 선택하세요.");
     });
 
     document.getElementById("cancel-report").addEventListener("click", function () {
-      if (currentMarker) {
-        currentMarker.setMap(null);
-        currentMarker = null;
+      if (markers.length > 0) {
+        const lastMarker = markers.pop();
+        lastMarker.setMap(null);
       }
-      if (currentInfoWindow) {
-        currentInfoWindow.setMap(null);
-        currentInfoWindow = null;
+
+      if (infoWindows.length > 0) {
+        const lastInfoWindow = infoWindows.pop();
+        lastInfoWindow.setMap(null);
       }
 
       document.getElementById("report-form").reset();
-      alert("제보가 취소되었습니다.");
+      alert("가장 최근의 제보가 취소되었습니다.");
     });
   </script>
 
