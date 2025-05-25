@@ -3,10 +3,11 @@
   justify-content: flex-end;
   gap: 40px;
   padding: 10px;
-  color: white;
+  padding-top: 0px;
+  color: #2c5364;
   font-size: 17px;
   list-style: none;
-  margin-top: 30px;
+  margin-top: 15px;
 }
 
 .navigation ul {
@@ -23,16 +24,16 @@
 
 .navigation li a{
   text-decoration: none;
-  color: white;
+  color: #2c5364;
   font-weight: bold;
   padding: 0 10px;
 }
 
-#soclm{
-  color: wheat;
+#socalm{
+  padding-left: 40px;
   display: flex;
   align-items: center;
-}
+}                    
 
   body {
     background-color: #f9f9f9;
@@ -42,17 +43,16 @@
  
   /* 헤더 스타일 */
   header {
-    background: linear-gradient(135deg, #2c5364, #203a43, #0f2027); 
-    color: white;
-    height: 100px;
+    background-color: white;
+    color: #2c5364;
+    height: 80px;
     padding: 20px 0;
+    border-bottom: #203a43;
     text-align: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    position: sticky;
     top: 0;
     z-index: 999;
-    transition: background 0.3s ease-in-out;
   }
 
   .header-container {
