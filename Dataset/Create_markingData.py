@@ -4,7 +4,7 @@ from datetime import datetime
 import json
 import csv
 
-serviceKey = "A0HK/SOeu1VN3B3SYlqE+WE77Bqw9x7nZ2D96eM9PTZpRyKULaisgX8LMZLeTFxuFM0WpQCzlPc6OqOaB8OgPQ==" # 본인의 서비스 키 입력
+serviceKey = "" # 본인의 api서비스 키 입력
 
 now = datetime.now()
 
