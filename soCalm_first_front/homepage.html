@@ -16,19 +16,20 @@
 
     <div class="navigation">
       <ul>
-        <li><a href="map.html">추가기능1</a></li>
-        <li><a href="report.html">날씨API</a></li>
-        <li><a href="about.html">추가기능3</a></li>
+        <li><a href="#point-a-map">지도</a></li>
+        <li><a href="#wheather">날씨</a></li>
+        <li><a href="Score.html">점수표시</a></li>
       </ul>
     </div>
    </div>
   </header>
 
   <main>
+   <section id="point-a-map">
     <div style="display: flex; gap: 20px; flex-wrap: wrap;">
       <div id="map" style="flex: 2;">
         <h2>지도</h2>
-        <div id="map-container"></div>
+        <div id="container"></div>
       </div>
 
       <div id="report" style="flex: 1;">
@@ -41,6 +42,16 @@
         </form>
       </div>
     </div>
+   </section>
+
+    <div id="up-to">
+      <a href="#"><img src="SOCALM.png" height="70px" width="70px"></a>
+    </div>
+
+    <section id="wheather">
+      <h2>날씨</h2>
+      <div id="container"></div>
+    </section>
 
     <section id="about">
       <h2>SoCalm</h2>
@@ -51,7 +62,7 @@
   </main>
 
   <footer>
-    <p>&copy; 2025 보행자 안전도 평가 프로젝트</p>
+    <p>&copy; Opensource Project : SOCALM</p>
   </footer>
 
   <script>
