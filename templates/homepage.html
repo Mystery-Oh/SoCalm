@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>보행자 안전도 평가 지도</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey="></script>
+</head>
+
+<body>
+  <header>
+    <div class="header-container">
+    <div id="socalm">
+      <a href="homepage.html"><img src="{{ url_for('static', filename='SOCALM.png') }}" height="100px" width="100px"></a>
+    </div>
+
+    <div class="navigation">
+      <ul>
+        <li><a href="#point-a-map">지도</a></li>
+        <li><a href="#wheather">날씨</a></li>
+        <li><a href="Score.html">점수표시</a></li>
+      </ul>
+    </div>
+   </div>
+  </header>
+
+  <main>
+   <section id="point-a-map">
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+      <div id="map" style="flex: 2;">
+        <h2>지도</h2>
+        <div id="map-container"></div>
+      </div>
+
+      <div id="report" style="flex: 1;">
+        <h2>위험지역 제보</h2>
+        <form id="report-form" action="/report" method="post">
+          <label>위치명: <input type="text" name="location"></label><br>
+          <label>설명: <textarea name="description"></textarea></label><br>  
+          <button type="submit">제보하기</button>
+          <button type="button" id="cancel-report">취소하기</button>
+        </form>
+      </div>
+    </div>
+   </section>
+
+    <div id="up-to">
+      <a href="#"><img src="{{ url_for('static', filename='SOCALM.png') }}" height="70px" width="70px"></a>
+    </div>
+
+    <section id="wheather">
+      <h2>날씨</h2>
+      <div id="container"></div>
+    </section>
+
+    <section id="about">
+      <h2>SoCalm</h2>
+      <p>This project is an open source project. Our team is composed of members from the Department of Computer Engineering and the Department of Software.</p>
+      <br>
+      <p style="font-size: 13px;">developers: (Oh-heeseung, Leejungjoo, Jang hyun gyu)</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; Opensource Project : SOCALM</p>
+  </footer>
+
+  <script>
+    let map = new Tmapv2.Map("map-container", {
+      center: new Tmapv2.LatLng(36.6256, 127.4545),
+      width: "100%",
+      height: "500px",
+      zoom: 16
+    });
+
+    const markers = [];
+    const infoWindows = [];
+
+    map.addListener("click", function (evt) {
+      const lat = evt.latLng._lat;
+      const lon = evt.latLng._lng;
+
+      const locationName = document.querySelector("input[name='location']").value.trim();
+      const description = document.querySelector("textarea[name='description']").value.trim();
+
+      if (!locationName || !description) {
+        alert("위치명과 설명을 입력한 후 지도를 클릭해주세요.");
+        return;
+      }
+
+      const marker = new Tmapv2.Marker({
+        position: new Tmapv2.LatLng(lat, lon),
+        map: map
+      });
+      markers.push(marker);
+
+      const infoWindow = new Tmapv2.InfoWindow({
+        position: new Tmapv2.LatLng(lat, lon),
+        content: `<div style="background:white;padding:5px;border-radius:5px"><strong>${locationName}</strong><br>${description}</div>`,
+        type: 2,
+        map: map
+      });
+      infoWindows.push(infoWindow);
+
+      map.setCenter(new Tmapv2.LatLng(lat, lon));
+
+      document.getElementById("report-form").reset();
+    });
+
+    document.getElementById("report-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      alert("왼쪽 지도를 클릭하여 제보 위치를 선택하세요.");
+    });
+
+    document.getElementById("cancel-report").addEventListener("click", function () {
+      if (markers.length > 0) {
+        const lastMarker = markers.pop();
+        lastMarker.setMap(null);
+      }
+
+      if (infoWindows.length > 0) {
+        const lastInfoWindow = infoWindows.pop();
+        lastInfoWindow.setMap(null);
+      }
+
+      document.getElementById("report-form").reset();
+      alert("가장 최근의 제보가 취소되었습니다.");
+    });
+  </script>
+
+</body>
+</html>

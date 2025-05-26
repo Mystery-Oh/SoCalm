@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>LoginPage</title>
+        <link href="{{ url_for('static', filename='LogInStyle.css') }}" rel="stylesheet" type="text/css">
+
+        <script>
+             var sido = 5;
+
+            function validateLogin() {
+                var username = document.getElementById("username").value;
+                var password = document.getElementById("password").value;
+            
+                
+                if (username == "admin" && password == "1234") {
+                    window.location.href = "homepage.html";
+                    alert("로그인 성공!");
+                } else {
+                    sido --;
+                    if(sido > 0){
+                        alert("아이디 혹은 비밀번호를 틀리셨습니다. 남은 횟수 : " + sido);
+                    } else {
+                        alert("5번 틀렸습니다. 로그인이 잠깁니다.");
+                        document.querySelector("input[type=submit]").disabled = true;
+                    }
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Safe Path</h1>
+            <div class="LoginForm">
+                <form onsubmit="event.preventDefault(); validateLogin();">
+                    <input type="text" id="username" placeholder="아이디" required><br>
+                    <input type="password" id="password" placeholder="패스워드" required><br>
+                    <input type="submit" value="Sign in">
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
