@@ -48,7 +48,7 @@
       <a href="#"><img src="SOCALM.png" height="70px" width="70px"></a>
     </div>
 
-    <section id="wheather">
+    <section id="weather">
       <h2>날씨</h2>
       <div id="container"></div>
     </section>
@@ -125,7 +125,37 @@
 
       document.getElementById("report-form").reset();
       alert("가장 최근의 제보가 취소되었습니다.");
+      
     });
+
+    const weatherContainer = document.querySelector("#weather #container");
+
+  async function fetchWeather() {
+    const lat = 36.6256;
+    const lon = 127.4545;
+    const apiKey = "";// 날씨 key 여기에 입력 
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=kr`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      const weatherHTML = `
+        <p><strong>지역:</strong> ${data.name}</p>
+        <p><strong>날씨:</strong> ${data.weather[0].description}</p>
+        <p><strong>온도:</strong> ${data.main.temp}°C</p>
+        <p><strong>습도:</strong> ${data.main.humidity}%</p>
+        <p><strong>풍속:</strong> ${data.wind.speed} m/s</p>
+      `;
+
+      weatherContainer.innerHTML = weatherHTML;
+    } catch (error) {
+      weatherContainer.innerHTML = "<p>날씨 정보를 불러오는 데 실패했습니다.</p>";
+      console.error("날씨 API 오류:", error);
+    }
+  }
+
+  fetchWeather();
   </script>
 
 </body>
