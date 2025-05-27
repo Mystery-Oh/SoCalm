@@ -4,47 +4,40 @@
     <meta charset="utf-8">
     <title>Sign Up</title>
     <link href="LogInstyle.css" rel="stylesheet" type="text/css">
-    <script>
-        // 예시: 기존 등록된 아이디 목록 (실제로는 서버 DB와 비교해야 함)
-        var existingUsernames = ["admin", "testuser", "guest"];
+<script>
+function signup(event) {
+    event.preventDefault();
 
-        function handleSignup(event) {
-            event.preventDefault();
+    const fullName = document.getElementById("fullName").value;
+    const username = document.getElementById("newUsername").value;
+    const password = document.getElementById("newPassword").value;
 
-            var fullName = document.getElementById("fullName").value.trim();
-            var username = document.getElementById("newUsername").value.trim();
-            var password = document.getElementById("newPassword").value;
-            var confirmPassword = document.getElementById("confirmPassword").value;
-
-            // 빈 칸 검사
-            if (!fullName || !username || !password || !confirmPassword) {
-                alert("모든 항목을 입력해주세요.");
-                return;
-            }
-
-            // 아이디 중복 검사
-            if (existingUsernames.includes(username)) {
-                alert("이미 존재하는 아이디입니다. 다른 아이디를 입력해주세요.");
-                return;
-            }
-
-            // 비밀번호 일치 검사
-            if (password !== confirmPassword) {
-                alert("비밀번호가 일치하지 않습니다.");
-                return;
-            }
-
-            // 회원가입 성공 처리
-            alert("회원가입 완료!");
-            // 여기에 서버로 사용자 정보를 전송하는 코드 추가 가능
+    fetch('http://localhost:3000/signup', {  // ← 백엔드 주소로 전송
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullName, username, password })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('회원가입 성공!');
+            window.location.href = 'LogInPage.html';
+        } else {
+            alert('회원가입 실패: ' + data.message);
         }
-    </script>
+    })
+    .catch(error => {
+        alert('서버 오류: ' + error);
+    });
+}
+</script>
+
 </head>
 <body>
     <div class="header">
         <h1>회원가입</h1>
         <div class="SignupForm">
-            <form onsubmit="handleSignup(event);">
+            <form onsubmit="signup(event)">
                 <input type="text" id="fullName" placeholder="이름을 입력하세요" required><br>
                 <input type="text" id="newUsername" placeholder="아이디를 입력하세요" required><br>
                 <input type="password" id="newPassword" placeholder="비밀번호를 입력하세요" required><br>
