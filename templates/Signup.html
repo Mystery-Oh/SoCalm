@@ -11,8 +11,15 @@
 <body>
     <div class="header">
         <h1>회원가입</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
         <div class="SignupForm">
-            <form onsubmit="signup(event)">
+            <form method="POST" action="{{ url_for('signup')}}">
                 <input type="text" id="fullName" placeholder="이름을 입력하세요" required><br>
                 <input type="text" id="newUsername" placeholder="아이디를 입력하세요" required><br>
                 <input type="password" id="newPassword" placeholder="비밀번호를 입력하세요" required><br>
