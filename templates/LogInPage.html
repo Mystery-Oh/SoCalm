@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>LoginPage</title>
-        <link href="LogInstyle.css" rel="stylesheet" type="text/css">
+        <link href="{{ url_for ('static', filename= 'LogInstyle.css' )}}" rel="stylesheet" type="text/css">
 
         <script>
              var sido = 5;
@@ -14,7 +14,7 @@
             
                 
                 if (username == "admin" && password == "1234") {
-                    window.location.href = "homepage.html";
+                    window.location.href = "{{ url_for('homepage') }}";
                     alert("로그인 성공!");
                 } else {
                     sido --;
@@ -36,7 +36,7 @@
                     <input type="text" id="username" placeholder="아이디" required><br>
                     <input type="password" id="password" placeholder="패스워드" required><br>
                     <input type="submit" value="Sign in">
-                    <button type="button" class="signup-btn" onclick="window.location.href='signup.html'">Sign up</button>
+                    <button type="button" class="signup-btn" onclick="window.location.href='{{ url_for('signup')}}'">Sign up</button>
 
                 </form>  
             </div>
