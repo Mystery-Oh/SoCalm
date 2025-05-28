@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>보행자 안전도 평가 지도</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename = 'style.css') }}">
   <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey="></script>
 </head>
 
@@ -11,7 +11,7 @@
   <header>
     <div class="header-container">
     <div id="socalm">
-      <a href="homepage.html"><img src="SOCALM.png" height="100px" width="100px"></a>
+      <a href="homepage.html"><img src="{{ url_for('static', filename='SOCALM.png') }}" height="100px" width="100px"></a>
     </div>
 
     <div class="navigation">
@@ -45,7 +45,7 @@
    </section>
 
     <div id="up-to">
-      <a href="#"><img src="SOCALM.png" height="70px" width="70px"></a>
+      <a href="#"><img src="{{ url_for('static', filename='SOCALM.png') }}" height="70px" width="70px"></a>
     </div>
 
     <section id="weather">
