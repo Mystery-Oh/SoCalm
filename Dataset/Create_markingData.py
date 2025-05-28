@@ -4,7 +4,17 @@ from datetime import datetime
 import json
 import csv
 
-serviceKey = "A0HK/SOeu1VN3B3SYlqE+WE77Bqw9x7nZ2D96eM9PTZpRyKULaisgX8LMZLeTFxuFM0WpQCzlPc6OqOaB8OgPQ==" # 본인의 서비스 키 입력
+serviceKey = "" # 본인의 서비스 키 입력
+
+SENTINEL = -1          # ‘없음’을 나타낼 값(원하시면 9999, 0, None 등으로 바꿔도 됨)
+OUTFILE  = "markingData.json"
+
+def safe_float(x):
+    "빈칸·결측이면 SENTINEL, 아니면 float"
+    try:
+        return float(x)
+    except (TypeError, ValueError):
+        return SENTINEL
 
 now = datetime.now()
 
@@ -13,7 +23,7 @@ base_time = now.strftime("%H00")   # HH00 형식 (시간은 00분 기준)
 
 file_list = ['accident_cheongju/cheongjuAccident.csv', 'accident_cheongju/cheongjuAccident2.csv']
 
-with open('markingData.jsonl', 'a', encoding='utf-8') as outfile:
+with open('markingData.json', 'w', encoding='utf-8') as outfile:
     for filename in file_list:
         with open(filename, 'r', encoding='utf-8') as csvfile:
             accident_data = csv.DictReader(csvfile)
@@ -22,6 +32,19 @@ with open('markingData.jsonl', 'a', encoding='utf-8') as outfile:
                 name = item['지점명']
                 lat = float(item['위도'])
                 lon = float(item['경도'])
+                사고건수 = item['사고건수']
+                if 사고건수 == '0':
+                    continue
+                사상자수 = item['사상자수']
+                사망자수 = item['사망자수']
+                중상자수 = item['중상자수']
+                경상자수 = item['경상자수']
+                polygon = item.get('다발지역폴리곤')
+                try:
+                    polygon = json.loads(polygon) if polygon else None
+                except json.JSONDecodeError:
+                    polygon = None  # 잘못된 형식이면 None 처리
+
                 nx, ny = convert_to_grid(lat, lon)
 
                 # url
@@ -37,6 +60,7 @@ with open('markingData.jsonl', 'a', encoding='utf-8') as outfile:
                     "totalCount": "10",
                     "nx": nx,
                     "ny": ny,
+
                 }
 
                 response = requests.get(url, params=params)
@@ -58,7 +82,7 @@ with open('markingData.jsonl', 'a', encoding='utf-8') as outfile:
                             informations[baseTime] = {}
                         informations[baseTime][category] = value
 
-                # ✅ 주요 날씨 항목 출력
+                # 주요 날씨 항목 출력
                 category_labels = {
                     'T1H': '기온(℃)',
                     'RN1': '1시간 강수량(mm)',
@@ -75,7 +99,13 @@ with open('markingData.jsonl', 'a', encoding='utf-8') as outfile:
                     "지점명": name,
                     "날씨": informations,
                     "위도": lat,
-                    "경도": lon
+                    "경도": lon,
+                    "사고건수": 사고건수,
+                    "사상자수": 사상자수,
+                    "사망자수": 사망자수,
+                    "중상자수": 중상자수,
+                    "경상자수": 경상자수,
+                    "다발지역폴리곤": polygon
                 }
                 print(final_data)
                 json.dump(final_data, outfile, ensure_ascii=False)
