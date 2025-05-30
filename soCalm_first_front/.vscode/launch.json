@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/leezungzoo/Desktop/소웨5월/open/SoCalm/soCalm_first_front",
+      "program": "/Users/leezungzoo/Desktop/소웨5월/open/SoCalm/soCalm_first_front/build/Debug/outDebug"
+    }
+  ]
+}
