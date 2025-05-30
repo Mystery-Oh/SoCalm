@@ -4,24 +4,14 @@ from datetime import datetime
 import json
 import csv
 
-serviceKey = "" # 본인의 서비스 키 입력
-
-SENTINEL = -1          # ‘없음’을 나타낼 값(원하시면 9999, 0, None 등으로 바꿔도 됨)
-OUTFILE  = "markingData.json"
-
-def safe_float(x):
-    "빈칸·결측이면 SENTINEL, 아니면 float"
-    try:
-        return float(x)
-    except (TypeError, ValueError):
-        return SENTINEL
+serviceKey = "U5VK8CgJFZwu73FsJKKLz6B2qfAUZcIRmsJf+IV4CCAkqdaWQETKV5igoCm40QZ6Od89IGv3p8+iQNcxCqxwWA==" # 본인의 서비스 키 입력
 
 now = datetime.now()
 
 base_date = now.strftime("%Y%m%d")  # YYYYMMDD 형식
 base_time = now.strftime("%H00")   # HH00 형식 (시간은 00분 기준)
 
-file_list = ['accident_cheongju/cheongjuAccident.csv', 'accident_cheongju/cheongjuAccident2.csv']
+file_list = ['accident_cheongju/cheongjuAccident.csv', 'accident_cheongju/cheongjuAccident2.csv','accident_cheongju/cheongjuAccident4.csv']
 
 with open('markingData.json', 'w', encoding='utf-8') as outfile:
     for filename in file_list:
@@ -35,6 +25,7 @@ with open('markingData.json', 'w', encoding='utf-8') as outfile:
                 사고건수 = item['사고건수']
                 if 사고건수 == '0':
                     continue
+                사고종류 = item.get('사고종류', None)
                 사상자수 = item['사상자수']
                 사망자수 = item['사망자수']
                 중상자수 = item['중상자수']
@@ -100,6 +91,7 @@ with open('markingData.json', 'w', encoding='utf-8') as outfile:
                     "날씨": informations,
                     "위도": lat,
                     "경도": lon,
+                    "사고종류": 사고종류,
                     "사고건수": 사고건수,
                     "사상자수": 사상자수,
                     "사망자수": 사망자수,
