@@ -7,6 +7,8 @@ load_dotenv()
 
 app = Flask(__name__)
 
+TMAP_API_KEY = os.getenv('TMAP_API_KEY')
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
@@ -61,7 +63,11 @@ def signup():
 
 @app.route('/homepage')
 def homepage():
-    return render_template('homepage.html')
+    return render_template('homepage.html', tmap_app_key=TMAP_API_KEY)
+
+@app.route('/score')
+def score():
+    return render_template('Score.html')
 
 if __name__ == "__main__":
 
