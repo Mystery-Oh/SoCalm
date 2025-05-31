@@ -19,5 +19,16 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
     
-#class LocationPassage(db.Model):
+class Report(db.Model):
+    __tablename__ = 'report'
+    id = db.Column(db.Integer, primary_key=True)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+    status = db.Column(db.String(255), nullable=False)
+    
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<LocationPassage id={self.id} lat={self.latitude} lon={self.longitude} status="{self.status}" user_id={self.user_id}>'
+
     
