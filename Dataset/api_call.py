@@ -14,7 +14,7 @@ base_time = now.strftime("%H00")   # HH00 형식 (시간은 00분 기준)
 
 url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst"
 
-with open('markingData.json', 'r', encoding='utf-8') as f:
+with open('algorithms/markingData_scored.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
     for id, item in data.items():
         lat = float(item['위도'])
@@ -66,7 +66,7 @@ with open('markingData.json', 'r', encoding='utf-8') as f:
         }
         item["날씨"] = informations
 
-with open('weatherupdate.json', 'w', encoding='utf-8') as f:
+with open('marking_updated.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
