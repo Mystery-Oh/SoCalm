@@ -20,7 +20,7 @@ class User(db.Model):
         return f'<User {self.username}>'
     
 class Report(db.Model):
-    __tablename__ = 'report'
+    __tablename__ = 'reports'
     id = db.Column(db.Integer, primary_key=True)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
@@ -29,6 +29,6 @@ class Report(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __repr__(self):
-        return f'<LocationPassage id={self.id} lat={self.latitude} lon={self.longitude} status="{self.status}" user_id={self.user_id}>'
+        return f'<Report id={self.id} lat={self.latitude} lon={self.longitude} status="{self.status}" user_id={self.user_id}>'
 
     

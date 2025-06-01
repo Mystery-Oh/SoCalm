@@ -21,10 +21,17 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
-@app.route('/')
-def login():
+#with app.app_context():
+#    db.create_all()
 
+@app.route('/')
+def login_page():
+
+    if 'user_id' in flask_session:
+        return redirect(url_for('homepage'))
     return render_template('LogInPage.html')
+
+#@app.route('/login', method=['POST']) #실제 로그인 처리 부분 구현 중
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
