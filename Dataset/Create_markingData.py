@@ -103,7 +103,7 @@ for filename in file_list:
 
 
 print(final_data)
-with open('markingData.json', 'w', encoding='utf-8') as outfile:
+with open('algorithms/markingData.json', 'w', encoding='utf-8') as outfile:
     json.dump(final_data, outfile, ensure_ascii=False)
     outfile.write('\n')
 print('생성 완료!')
