@@ -1,5 +1,6 @@
 import json
 
+# 점수 계산 함수
 def 점수계산(entry):
     try:
         사고건수 = int(entry["사고건수"])
@@ -13,8 +14,13 @@ def 점수계산(entry):
         WSD = float(날씨정보["WSD"])
         RN1 = float(날씨정보["RN1"])
 
-        점수 = 사고건수 * 1 + 사망자수 * 7 + 중상자수 * 5 + 경상자수 * 2
+        점수 = 0
+        점수 += 사고건수 * 1
+        점수 += 사망자수 * 7
+        점수 += 중상자수 * 5
+        점수 += 경상자수 * 2
 
+        # 강수 형태 (PTY)
         if PTY == 1:
             점수 += 10
         elif PTY == 2:
@@ -22,6 +28,7 @@ def 점수계산(entry):
         elif PTY == 3:
             점수 += 20
 
+        # 강수량 (RN1)
         if 0.1 <= RN1 < 1:
             점수 += 2
         elif 1 <= RN1 < 5:
@@ -33,54 +40,39 @@ def 점수계산(entry):
         elif RN1 >= 30:
             점수 += 30
 
+        # 풍속 (WSD)
         if WSD >= 10:
             점수 += (WSD - 9) * 2
 
         return 점수
 
     except Exception as e:
-        print(f"점수 계산 오류: {e}")
+        print(f" 점수 계산 오류: {e}")
         return 0
 
-def 위험도분류(score):
-    if score <= 50:
-        return "아주 약함"
-    elif score <= 100:
-        return "약함"
-    elif score <= 200:
-        return "보통"
-    elif score <= 500:
-        return "위험"
-    else:
-        return "매우 위험"
-
+# 파일 처리 및 점수 반영
 def main():
     input_file = "markingData.json"
     output_file = "markingData_scored.json"
 
-    try:
-        with open(input_file, "r", encoding="utf-8") as infile, \
-             open(output_file, "w", encoding="utf-8") as outfile:
+    with open(input_file, "r", encoding="utf-8") as infile, \
+         open(output_file, "w", encoding="utf-8") as outfile:
 
-            for line in infile:
-                data = json.loads(line)  # 줄 단위 JSON 객체
+        for line in infile:
+            try:
+                data = json.loads(line)
 
                 for id_, entry in data.items():
                     score = 점수계산(entry)
-                    danger = 위험도분류(score)
                     entry["점수"] = score
-                    entry["위험도"] = danger
+                    print(f"{entry['지점명']} → 점수: {score}점")
 
-                    print(f"{entry['지점명']} → 점수: {score}점, 위험도: {danger}")
+                # 점수 추가된 데이터를 한 줄로 다시 저장
+                json.dump(data, outfile, ensure_ascii=False)
+                outfile.write('\n')
 
-                    # 한 줄로 저장
-                    json.dump({id_: entry}, outfile, ensure_ascii=False)
-                    outfile.write("\n")
-
-        print(f"\n✅ 저장 완료: {output_file}")
-
-    except Exception as e:
-        print(f"❌ 오류: {e}")
+            except Exception as e:
+                print(f" JSON 파싱 오류: {e}")
 
 if __name__ == "__main__":
     main()
