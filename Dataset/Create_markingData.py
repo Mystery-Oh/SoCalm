@@ -4,7 +4,7 @@ from datetime import datetime
 import json
 import csv
 
-serviceKey = "U5VK8CgJFZwu73FsJKKLz6B2qfAUZcIRmsJf+IV4CCAkqdaWQETKV5igoCm40QZ6Od89IGv3p8+iQNcxCqxwWA==" # 본인의 서비스 키 입력
+serviceKey = "" # 본인의 서비스 키 입력
 url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst"
 
 now = datetime.now()
@@ -13,14 +13,15 @@ base_date = now.strftime("%Y%m%d")  # YYYYMMDD 형식
 base_time = now.strftime("%H00")   # HH00 형식 (시간은 00분 기준)
 
 final_data = {}
-file_list = ['accident_cheongju/cheongjuAccident.csv', 'accident_cheongju/cheongjuAccident2.csv','accident_cheongju/cheongjuAccident4.csv']
+file_list = ['accident_cheongju/cheongjuAccident.csv','accident_cheongju/cheongjuAccident2.csv']
 
 
 for filename in file_list:
     with open(filename, encoding='utf-8') as csvfile:
         accident_data = csv.DictReader(csvfile)
+        #print(accident_data.fieldnames) 열이름 체크
         for item in accident_data:
-            id = item.get('사고다발지id') or item.get('다발지역 아이디(ID)')
+            id = item.get('\ufeff사고다발지fid') or item.get('\ufeff다발지역 에프아이디(FID)')
             name = item['지점명']
             lat = float(item['위도'])
             lon = float(item['경도'])
