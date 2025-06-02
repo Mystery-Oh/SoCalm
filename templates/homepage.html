@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title>보행자 안전도 평가 지도</title>
   <link rel="stylesheet" href="{{ url_for('static', filename = 'style.css') }}">
-  <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey="></script>
+  <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=mJEPBHCoBK15mKPOthoG73z7SbzYeZCG8QoYlEx0"></script>
 </head>
 
 <body>
@@ -29,7 +29,7 @@
     <div style="display: flex; gap: 20px; flex-wrap: wrap;">
       <div id="map" style="flex: 2;">
         <h2>지도</h2>
-        <div id="container"></div>
+        <div id="map-container"></div>
       </div>
 
       <div id="report" style="flex: 1;">
@@ -75,6 +75,57 @@
 
     const markers = [];
     const infoWindows = [];
+
+async function loadDangerPoints() {
+  try {
+    const response = await fetch("/danger-data");
+    const data = await response.json();
+
+    Object.values(data).forEach(item => {
+      const lat = item["위도"];
+      const lng = item["경도"];
+      const label = item["지점명"];
+      const danger = item["위험도"];
+      const score = item["점수"];
+
+
+      const showDangerLevels = ["아주 약함", "약함", "보통", "위험", "아주 위험"];
+
+      const marker = new Tmapv2.Marker({
+        position: new Tmapv2.LatLng(lat, lng),
+        map: map
+      });
+
+
+const dangerColors = {
+  "아주 약함": "#4caf50",   
+  "약함": "#ffeb3b",       
+  "보통": "#ff9800",       
+  "위험": "#f44336",       
+  "아주 위험": "#9c27b0"   
+};
+
+const color = dangerColors[danger] || "#333";
+
+const infoWindow = new Tmapv2.InfoWindow({
+  position: new Tmapv2.LatLng(lat, lng),
+  content: `
+    <div style="color: ${color}; font-weight: bold; white-space: nowrap; background: transparent; border: none; box-shadow: none;">
+      ${danger}
+    </div>`,
+  type: 2,
+  map: map
+});
+
+
+    });
+  } catch (error) {
+    console.error("danger-data 불러오기 실패:", error);
+  }
+}
+
+loadDangerPoints();
+
 
     map.addListener("click", function (evt) {
       const lat = evt.latLng._lat;
