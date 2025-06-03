@@ -29,13 +29,11 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-
 @app.route('/')
 def login_page():
     if 'user_id' in flask_session:
         return redirect(url_for('homepage'))
     return render_template('LogInPage.html')
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -61,7 +59,6 @@ def login():
     if 'user_id' in flask_session:
         return redirect(url_for('homepage'))
     return render_template('LogInPage.html')
-
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -98,28 +95,23 @@ def signup():
 
     return render_template('Signup.html')
 
-
 @app.route('/homepage', methods=['GET', 'POST'])
 def homepage():
     return render_template('homepage.html', tmap_app_key=TMAP_API_KEY)
 
-
 @app.route('/score')
 def score():
     return render_template('Score.html')
-
 
 def run_api_call():
     print("호출 시작")
     subprocess.run(['python', 'Dataset/api_call.py'])
     print("api 호출됨")
 
-
 @app.route('/run-api-call')
 def manual_run():
     run_api_call()
     return "날씨 데이터 갱신 완료"
-
 
 @app.route('/danger-data')
 def danger_data():
