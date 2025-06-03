@@ -89,7 +89,7 @@
   /* 본문 섹션 스타일 */
   main {
     padding: 40px 20px;
-    max-width: 2000px;
+    max-width: 1000px;
     margin: 0 auto;
   }
  
@@ -206,15 +206,10 @@
 
 #up-to {
   position: fixed;
-  right: 30px;
+  right: 60px;
   top: 80%;
-  width: 70px;              
-  height: 70px;           
   background-color: white;
   color: #2c5364;
-  text-align: center;   
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
-  display: flex;           
-  justify-content: center;
-  align-items: center;
-}
+  text-align: center;
+  float: right;
+} 
