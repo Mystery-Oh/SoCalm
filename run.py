@@ -7,7 +7,6 @@ from models import db, User
 import json
 import time
 
-
 load_dotenv()
 
 app = Flask(__name__)
@@ -115,10 +114,12 @@ def run_api_call():
     subprocess.run(['python', 'Dataset/api_call.py'])
     print("api 호출됨")
 
+
 @app.route('/run-api-call')
 def manual_run():
     run_api_call()
     return "날씨 데이터 갱신 완료"
+
 
 @app.route('/danger-data')
 def danger_data():
@@ -126,9 +127,10 @@ def danger_data():
         data = json.load(f)
     return jsonify(data)
 
+
 if __name__ == "__main__":
     scheduler = BackgroundScheduler()
     scheduler.add_job(run_api_call, 'interval', hours=1)
     scheduler.start()
     run_api_call()  # 앱 실행 즉시 수동으로 한번  실행
-    app.run(host='0.0.0.0', port= 5001, debug=True, use_reloader=False)
+    app.run(host='0.0.0.0', port=5001, debug=True, use_reloader=False)
