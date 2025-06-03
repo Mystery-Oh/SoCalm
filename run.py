@@ -1,6 +1,9 @@
 from flask import Flask, render_template
 import os
+from apscheduler.schedulers.background import BackgroundScheduler
+import subprocess
 from dotenv import load_dotenv
+
 
 load_dotenv()
 
@@ -20,5 +23,19 @@ def signup():
 def homepage():
     return render_template('homepage.html')
 
+def run_api_call():
+    print("호출 시작")
+    subprocess.run(['python', 'Dataset/api_call.py'])
+    print("api 호출됨")
+
+@app.route('/run-api-call')
+def manual_run():
+    run_api_call()
+    return "날씨 데이터 갱신 완료"
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(run_api_call, 'interval', hours=1)
+    scheduler.start()
+    run_api_call()  # 앱 실행 즉시 수동으로 한번  실행
+    app.run(host='0.0.0.0', debug=True, use_reloader=False)
