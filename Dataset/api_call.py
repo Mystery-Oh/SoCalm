@@ -6,7 +6,7 @@ import os
 
 
 
-serviceKey = "U5VK8CgJFZwu73FsJKKLz6B2qfAUZcIRmsJf+IV4CCAkqdaWQETKV5igoCm40QZ6Od89IGv3p8+iQNcxCqxwWA==" # 본인의 서비스 키 입력
+serviceKey = "" # 본인의 서비스 키 입력
 
 now = datetime.now()
 
