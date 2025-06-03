@@ -45,4 +45,4 @@ if __name__ == "__main__":
     scheduler.add_job(run_api_call, 'interval', hours=1)
     scheduler.start()
     run_api_call()  # 앱 실행 즉시 수동으로 한번  실행
-    app.run(host='0.0.0.0', debug=True, use_reloader=False)
+    app.run(host='0.0.0.0', port= 5001, debug=True, use_reloader=False)
