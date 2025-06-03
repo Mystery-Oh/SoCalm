@@ -25,10 +25,9 @@ class Report(db.Model):
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(255), nullable=False)
-    
+    location = db.Column(db.String(255), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __repr__(self):
         return f'<Report id={self.id} lat={self.latitude} lon={self.longitude} status="{self.status}" user_id={self.user_id}>'
 
-    

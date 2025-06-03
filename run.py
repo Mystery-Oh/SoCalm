@@ -10,6 +10,7 @@ load_dotenv()
 app = Flask(__name__)
 
 TMAP_API_KEY = os.getenv('TMAP_API_KEY')
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
@@ -24,16 +25,38 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
 #with app.app_context():
-#    db.create_all()
+#    db.create_all() # 실제 운영 환경에서는 Alembic 같은 마이그레이션 도구 사용을 권장합니다.
 
 @app.route('/')
 def login_page():
-
     if 'user_id' in flask_session:
         return redirect(url_for('homepage'))
     return render_template('LogInPage.html')
 
-#@app.route('/login', method=['POST']) #실제 로그인 처리 부분 구현 중
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if not username or not password:
+            flash('아이디와 비밀번호를 모두 입력해주세요.', 'danger')
+            return redirect(url_for('login_page'))
+
+        user = User.query.filter_by(username=username).first()
+
+        if user and user.check_password(password):
+            flask_session['user_id'] = user.id
+            flask_session['username'] = user.username
+            flash(f'{user.username}님, 환영합니다!', 'success')
+            return redirect(url_for('homepage'))
+        else:
+            flash('아이디 또는 비밀번호가 올바르지 않습니다.', 'danger')
+            return redirect(url_for('login_page'))
+
+    if 'user_id' in flask_session:
+        return redirect(url_for('homepage'))
+    return render_template('LogInPage.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -70,7 +93,7 @@ def signup():
     
     return render_template('Signup.html')
 
-@app.route('/homepage')
+@app.route('/homepage', methods=['GET', 'POST'])
 def homepage():
     return render_template('homepage.html', tmap_app_key=TMAP_API_KEY)
 
