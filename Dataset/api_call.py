@@ -3,10 +3,13 @@ import json
 from coord_converter import convert_to_grid
 from datetime import datetime
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 
-serviceKey = "" # 본인의 서비스 키 입력
+serviceKey = WEATHER_API_KEY # 본인의 서비스 키 입력
 
 now = datetime.now()
 
@@ -15,7 +18,8 @@ base_time = now.strftime("%H00")   # HH00 형식 (시간은 00분 기준)
 
 url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst"
 
-file_path = os.path.join(os.path.dirname(__file__), '../algorithms/danger.json') #api_call.py 가 어디서 실행되든 스크립트 옆에서 읽음
+base_dir = os.path.dirname(os.path.dirname(__file__))  # api_call.py의 상위 = 프로젝트 루트
+file_path = os.path.join(base_dir, 'algorithms', 'danger.json')
 
 with open(file_path, 'r', encoding='utf-8') as f:
     data = json.load(f)
@@ -39,6 +43,8 @@ with open(file_path, 'r', encoding='utf-8') as f:
 
         response = requests.get(url, params=params)
         api_data = response.json()
+
+        #print(api_data)
 
         # print(json.dumps(data, indent=2, ensure_ascii=False))  #전체 출력값 확인
 
@@ -71,7 +77,7 @@ with open(file_path, 'r', encoding='utf-8') as f:
 
 print("danger.json 갱신 완료:", datetime.now())
 
-with open('../algorithms/danger.json', 'w', encoding='utf-8') as f:
+with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
