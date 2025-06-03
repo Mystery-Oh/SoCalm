@@ -92,7 +92,7 @@ def signup():
             db.session.rollback()
             flash(f'회원가입 처리 중 오류가 발생했습니다: {str(e)}', 'danger')
             return redirect(url_for('signup'))
-    
+
     return render_template('Signup.html')
 
 @app.route('/homepage', methods=['GET', 'POST'])
@@ -118,11 +118,11 @@ def danger_data():
     with open('algorithms/danger.json', 'r', encoding='utf-8') as f:
         data = json.load(f)
     return jsonify(data)
-    
 
 if __name__ == "__main__":
     scheduler = BackgroundScheduler()
     scheduler.add_job(run_api_call, 'interval', hours=1)
     scheduler.start()
     run_api_call()  # 앱 실행 즉시 수동으로 한번  실행
-    app.run(host='0.0.0.0', port= 5001, debug=True, use_reloader=False)
+
+    app.run(host='0.0.0.0', port=5001, debug=True, use_reloader=False)

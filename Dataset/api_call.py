@@ -2,10 +2,11 @@ import requests
 import json
 from coord_converter import convert_to_grid
 from datetime import datetime
+import os
 
 
 
-serviceKey = "U5VK8CgJFZwu73FsJKKLz6B2qfAUZcIRmsJf+IV4CCAkqdaWQETKV5igoCm40QZ6Od89IGv3p8+iQNcxCqxwWA==" # 본인의 서비스 키 입력
+serviceKey = "" # 본인의 서비스 키 입력
 
 now = datetime.now()
 
@@ -14,7 +15,9 @@ base_time = now.strftime("%H00")   # HH00 형식 (시간은 00분 기준)
 
 url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst"
 
-with open('algorithms/markingData_scored.json', 'r', encoding='utf-8') as f:
+file_path = os.path.join(os.path.dirname(__file__), '../algorithms/danger.json') #api_call.py 가 어디서 실행되든 스크립트 옆에서 읽음
+
+with open(file_path, 'r', encoding='utf-8') as f:
     data = json.load(f)
     for id, item in data.items():
         lat = float(item['위도'])
@@ -66,7 +69,9 @@ with open('algorithms/markingData_scored.json', 'r', encoding='utf-8') as f:
         }
         item["날씨"] = informations
 
-with open('marking_updated.json', 'w', encoding='utf-8') as f:
+print("danger.json 갱신 완료:", datetime.now())
+
+with open('../algorithms/danger.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
