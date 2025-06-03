@@ -24,8 +24,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
-#with app.app_context():
-#    db.create_all() # 실제 운영 환경에서는 Alembic 같은 마이그레이션 도구 사용을 권장합니다.
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def login_page():
