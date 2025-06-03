@@ -15,7 +15,7 @@ base_time = now.strftime("%H00")   # HH00 형식 (시간은 00분 기준)
 
 url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst"
 
-file_path = os.path.join(os.path.dirname(__file__), 'marking_updated.json') #api_call.py 가 어디서 실행되든 스크립트 옆에서 읽음
+file_path = os.path.join(os.path.dirname(__file__), '../algorithms/danger.json') #api_call.py 가 어디서 실행되든 스크립트 옆에서 읽음
 
 with open(file_path, 'r', encoding='utf-8') as f:
     data = json.load(f)
@@ -69,9 +69,9 @@ with open(file_path, 'r', encoding='utf-8') as f:
         }
         item["날씨"] = informations
 
-print("marking_updated.json 갱신 완료:", datetime.now())
+print("danger.json 갱신 완료:", datetime.now())
 
-with open('marking_updated.json', 'w', encoding='utf-8') as f:
+with open('../algorithms/danger.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 

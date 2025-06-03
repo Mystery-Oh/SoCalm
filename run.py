@@ -1,8 +1,9 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
 import subprocess
 from dotenv import load_dotenv
+import json
 
 
 load_dotenv()
@@ -32,6 +33,12 @@ def run_api_call():
 def manual_run():
     run_api_call()
     return "날씨 데이터 갱신 완료"
+
+@app.route('/danger-data')
+def danger_data():
+    with open('algorithms/danger.json', 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    return jsonify(data)
 
 if __name__ == "__main__":
     scheduler = BackgroundScheduler()
