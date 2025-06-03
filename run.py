@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session as flask_session, jsonify
 import os
+from apscheduler.schedulers.background import BackgroundScheduler
+import subprocess
 from dotenv import load_dotenv
 from models import db, User
 import json
@@ -101,6 +103,26 @@ def homepage():
 def score():
     return render_template('Score.html')
 
-if __name__ == "__main__":
+def run_api_call():
+    print("호출 시작")
+    subprocess.run(['python', 'Dataset/api_call.py'])
+    print("api 호출됨")
 
-    app.run(host='0.0.0.0', debug=True)
+@app.route('/run-api-call')
+def manual_run():
+    run_api_call()
+    return "날씨 데이터 갱신 완료"
+
+@app.route('/danger-data')
+def danger_data():
+    with open('algorithms/danger.json', 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    return jsonify(data)
+    
+
+if __name__ == "__main__":
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(run_api_call, 'interval', hours=1)
+    scheduler.start()
+    run_api_call()  # 앱 실행 즉시 수동으로 한번  실행
+    app.run(host='0.0.0.0', port= 5001, debug=True, use_reloader=False)
