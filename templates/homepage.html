@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title>보행자 안전도 평가 지도</title>
   <link rel="stylesheet" href="{{ url_for('static', filename = 'style.css') }}">
-  <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey={{tmap_app_key}}"></script>
+  <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey="></script>
 </head>
 
 <body>
@@ -54,15 +54,13 @@
       <div id="container"></div>
     </section>
 
-    <section id="about">
-      <h2>SoCalm</h2>
-      <p>This project is an open source project. Our team is composed of members from the Department of Computer Engineering and the Department of Software.</p>
-      <p style="font-size: 13px;">developers: (Oh-heeseung, Leejungjoo, Jang hyun gyu)</p>
-    </section>
   </main>
 
   <footer>
-    <p>&copy; Opensource Project : SOCALM</p>
+    <h2>SoCalm</h2>
+    <p>This project is an open source project. Our team is composed of members from the Department of Computer Engineering and the Department of Software.</p>
+    <p style="font-size: 13px;">developers: (Oh-heeseung, Leejungjoo, Jang hyun gyu)<a href="https://github.com/Mystery-Oh/SoCalm"><img src="{{ url_for('static', filename='Github.png') }}" height="40px" width="40px" style="margin-left: 25px;"></a></p>
+    <p>&copy; Opensource Project : SOCALM</p> <br />
   </footer>
 
   <script>
@@ -118,7 +116,7 @@
     loadDangerPoints();
 
     map.addListener("click", function (evt) {
-      // 지도 클릭 시 위치 저장 및 폼 보여주기
+
       const lat = evt.latLng._lat;
       const lon = evt.latLng._lng;
 
