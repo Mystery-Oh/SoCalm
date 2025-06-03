@@ -3,10 +3,13 @@ import json
 from coord_converter import convert_to_grid
 from datetime import datetime
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 
-serviceKey = "" # 본인의 서비스 키 입력
+serviceKey = WEATHER_API_KEY # 본인의 서비스 키 입력
 
 now = datetime.now()
 
@@ -40,6 +43,8 @@ with open(file_path, 'r', encoding='utf-8') as f:
 
         response = requests.get(url, params=params)
         api_data = response.json()
+
+        #print(api_data)
 
         # print(json.dumps(data, indent=2, ensure_ascii=False))  #전체 출력값 확인
 
