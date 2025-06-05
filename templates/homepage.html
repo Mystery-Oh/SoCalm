@@ -10,39 +10,40 @@
 <body>
   <header>
     <div class="header-container">
-    <div id="socalm">
-      <a href="homepage.html"><img src="{{ url_for('static', filename='SOCALM.png') }}" height="100px" width="100px"></a>
+      <div id="socalm">
+        <a href="homepage.html"><img src="{{ url_for('static', filename='SOCALM.png') }}" height="100px" width="100px"></a>
+      </div>
+      <div class="navigation">
+        <ul>
+          <li><a href="#point-a-map">지도</a></li>
+          <li><a href="#weather">날씨</a></li>
+          <li><a href="Score.html">점수표시</a></li>
+          <li>로그아웃</li>
+        </ul>
+      </div>
     </div>
-
-    <div class="navigation">
-      <ul>
-        <li><a href="#point-a-map">지도</a></li>
-        <li><a href="#wheather">날씨</a></li>
-        <li><a href="Score.html">점수표시</a></li>
-      </ul>
-    </div>
-   </div>
   </header>
 
   <main>
-   <section id="point-a-map">
-    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-      <div id="map" style="flex: 2;">
-        <h2>지도</h2>
-        <div id="container"></div>
-      </div>
+    <section id="point-a-map">
+      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div id="map" style="flex: 2;">
+          <h2>지도</h2>
+          <div id="map-container" style="height: 700px;"></div>
+        </div>
 
-      <div id="report" style="flex: 1;">
-        <h2>위험지역 제보</h2>
-        <form id="report-form" action="/report" method="post">
-          <label>위치명: <input type="text" name="location"></label><br>
-          <label>설명: <textarea name="description"></textarea></label><br>  
-          <button type="submit">제보하기</button>
-          <button type="button" id="cancel-report">취소하기</button>
-        </form>
+        <div id="report" style="flex: 1; display: none;">
+          <div class="close-btn" id="close-report">✕</div>
+          <h2>위험지역 제보</h2>
+          <form id="report-form" action="/report" method="post">
+            <label>위치명: <input type="text" name="location" required></label><br>
+            <label>설명: <textarea name="description" required></textarea></label><br>
+            <button type="submit">제보하기</button>
+            <button type="button" id="cancel-report">취소하기</button>
+          </form>
+        </div>
       </div>
-    </div>
-   </section>
+    </section>
 
     <div id="up-to">
       <a href="#"><img src="{{ url_for('static', filename='SOCALM.png') }}" height="70px" width="70px"></a>
@@ -53,40 +54,97 @@
       <div id="container"></div>
     </section>
 
-    <section id="about">
-      <h2>SoCalm</h2>
-      <p>This project is an open source project. Our team is composed of members from the Department of Computer Engineering and the Department of Software.</p>
-      <br>
-      <p style="font-size: 13px;">developers: (Oh-heeseung, Leejungjoo, Jang hyun gyu)</p>
-    </section>
   </main>
 
   <footer>
-    <p>&copy; Opensource Project : SOCALM</p>
+    <h2>SoCalm</h2>
+    <p>This project is an open source project. Our team is composed of members from the Department of Computer Engineering and the Department of Software.</p>
+    <p style="font-size: 13px;">developers: (Oh-heeseung, Leejungjoo, Jang hyun gyu)<a href="https://github.com/Mystery-Oh/SoCalm"><img src="{{ url_for('static', filename='Github.png') }}" height="40px" width="40px" style="margin-left: 25px;"></a></p>
+    <p>&copy; Opensource Project : SOCALM</p> <br />
   </footer>
 
   <script>
     let map = new Tmapv2.Map("map-container", {
       center: new Tmapv2.LatLng(36.6256, 127.4545),
       width: "100%",
-      height: "500px",
+      height: "700px",
       zoom: 16
     });
 
     const markers = [];
     const infoWindows = [];
 
+    let pendingClick = null;
+
+    async function loadDangerPoints() {
+      try {
+        const response = await fetch("/danger-data");
+        const data = await response.json();
+
+        Object.values(data).forEach(item => {
+          const lat = item["위도"];
+          const lng = item["경도"];
+          const danger = item["위험도"];
+
+          const dangerColors = {
+            "아주 약함": "#4caf50",
+            "약함": "#ffeb3b",
+            "보통": "#ff9800",
+            "위험": "#f44336",
+            "아주 위험": "#9c27b0"
+          };
+
+          const color = dangerColors[danger] || "#333";
+
+          new Tmapv2.Marker({
+            position: new Tmapv2.LatLng(lat, lng),
+            map: map
+          });
+
+          new Tmapv2.InfoWindow({
+            position: new Tmapv2.LatLng(lat, lng),
+            content: `<div style="color: ${color}; font-weight: bold;">${danger}</div>`,
+            type: 2,
+            map: map
+          });
+        });
+      } catch (error) {
+        console.error("danger-data 불러오기 실패:", error);
+      }
+    }
+
+    loadDangerPoints();
+
     map.addListener("click", function (evt) {
+
       const lat = evt.latLng._lat;
       const lon = evt.latLng._lng;
+
+      pendingClick = { lat, lon };
+
+      const reportDiv = document.getElementById("report");
+      reportDiv.style.display = "block";
+      reportDiv.scrollIntoView({ behavior: "smooth" });
+      document.querySelector("input[name='location']").focus();
+    });
+
+    document.getElementById("report-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      if (!pendingClick) {
+        alert("지도를 클릭해서 위치를 먼저 선택해주세요.");
+        return;
+      }
 
       const locationName = document.querySelector("input[name='location']").value.trim();
       const description = document.querySelector("textarea[name='description']").value.trim();
 
       if (!locationName || !description) {
-        alert("위치명과 설명을 입력한 후 지도를 클릭해주세요.");
+        alert("모든 항목을 입력해주세요.");
         return;
       }
+
+      const { lat, lon } = pendingClick;
 
       const marker = new Tmapv2.Marker({
         position: new Tmapv2.LatLng(lat, lon),
@@ -105,11 +163,8 @@
       map.setCenter(new Tmapv2.LatLng(lat, lon));
 
       document.getElementById("report-form").reset();
-    });
-
-    document.getElementById("report-form").addEventListener("submit", function (e) {
-      e.preventDefault();
-      alert("왼쪽 지도를 클릭하여 제보 위치를 선택하세요.");
+      document.getElementById("report").style.display = "none";
+      pendingClick = null;
     });
 
     document.getElementById("cancel-report").addEventListener("click", function () {
@@ -124,39 +179,45 @@
       }
 
       document.getElementById("report-form").reset();
+      document.getElementById("report").style.display = "none";
+      pendingClick = null;
       alert("가장 최근의 제보가 취소되었습니다.");
-      
+    });
+
+    document.getElementById("close-report").addEventListener("click", function () {
+      document.getElementById("report").style.display = "none";
+      document.getElementById("report-form").reset();
+      pendingClick = null;
     });
 
     const weatherContainer = document.querySelector("#weather #container");
 
-  async function fetchWeather() {
-    const lat = 36.6256;
-    const lon = 127.4545;
-    const apiKey = "";// 날씨 key 여기에 입력 
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=kr`;
+    async function fetchWeather() {
+      const lat = 36.6256;
+      const lon = 127.4545;
+      const apiKey = ""; // 여기에 API 키 입력
+      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=kr`;
 
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
 
-      const weatherHTML = `
-        <p><strong>지역:</strong> ${data.name}</p>
-        <p><strong>날씨:</strong> ${data.weather[0].description}</p>
-        <p><strong>온도:</strong> ${data.main.temp}°C</p>
-        <p><strong>습도:</strong> ${data.main.humidity}%</p>
-        <p><strong>풍속:</strong> ${data.wind.speed} m/s</p>
-      `;
+        const weatherHTML = `
+          <p><strong>지역:</strong> ${data.name}</p>
+          <p><strong>날씨:</strong> ${data.weather[0].description}</p>
+          <p><strong>온도:</strong> ${data.main.temp}°C</p>
+          <p><strong>습도:</strong> ${data.main.humidity}%</p>
+          <p><strong>풍속:</strong> ${data.wind.speed} m/s</p>
+        `;
 
-      weatherContainer.innerHTML = weatherHTML;
-    } catch (error) {
-      weatherContainer.innerHTML = "<p>날씨 정보를 불러오는 데 실패했습니다.</p>";
-      console.error("날씨 API 오류:", error);
+        weatherContainer.innerHTML = weatherHTML;
+      } catch (error) {
+        weatherContainer.innerHTML = "<p>날씨 정보를 불러오는 데 실패했습니다.</p>";
+        console.error("날씨 API 오류:", error);
+      }
     }
-  }
 
-  fetchWeather();
+    fetchWeather();
   </script>
-
 </body>
 </html>
