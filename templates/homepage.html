@@ -35,6 +35,9 @@
       <div style="display: flex; gap: 20px; flex-wrap: wrap;">
         <div id="map" style="flex: 2;">
           <h2>지도 클릭 후 제보하기</h2>
+
+          <button id="getLocationBtn" style="margin-bottom: 10px;"> 내 위치 보기</button>
+
           <div id="map-container" style="height: 700px;"></div>
         </div>
 
@@ -51,10 +54,25 @@
       </div>
     </section>
 
-    <div id="up-to">
-      <a href="#"><img src="{{ url_for('static', filename='SOCALM.png') }}" height="70px" width="70px"></a>
+    <div id="weather-to">
+      <h2 style="font-size: 20px;">오늘의 날씨   <img id="weather-icon" src="/static/default.jpg" alt="날씨 아이콘" style="width:30px; height:30px;" /></h2>
+      <div class="weather-box">
+        <div id="weather-icon-box">
+        </div>
+        <div id="weather-temp-box">
+          <h2 id="weather-temp"></h2>
+        </div>
+        <div id="weather-nav">
+          <ul>
+            <li><p id="weather-humidity"></p></li>
+            <li><p id="weather-wind"></p></li>
+            <li><p id="weather-rain"></p></li>
+          </ul>
+        </div>
+      </div>
     </div>
-  </main>
+    
+    
 
   <footer>
     <h2>SoCalm</h2>
@@ -64,6 +82,56 @@
   </footer>
 
   <script>
+  async function loadWeatherData() {
+      try {
+        const response = await fetch("/danger-data");
+        const data = await response.json();
+
+        const firstKey = Object.keys(data)[0];
+        const weather = data[firstKey]["날씨"]["2000"]; 
+
+        const temperature = weather["T1H"]; // 기온
+        const humidity = weather["REH"];   // 습도
+        const wind = weather["WSD"];       // 풍속
+        const rainType = weather["PTY"];   // 강수 형태
+        const rainAmount = weather["RN1"]; // 강수량
+
+        const rainTypeText = {
+          "0": "없음",
+          "1": "비",
+          "2": "비/눈",
+          "3": "눈",
+          "4": "소나기"
+        }[rainType] || "정보 없음";
+
+        let imageFile = "default.jpg";
+        if (rainType === "0") {
+          imageFile = "sunny.jpg";
+        } else if (rainType === "1") {
+          imageFile = "rainny.jpg";
+        } else if (rainType === "2") {
+          imageFile = "snowrain.jpg";
+        } else if (rainType === "3") {
+          imageFile = "snow.jpg";
+        } else if (rainType === "4") {
+          imageFile = "shower.jpg";
+        }
+
+        document.getElementById("weather-icon").src = `/static/${imageFile}`;
+        document.getElementById("weather-temp").textContent = `기온: ${temperature}℃`;
+        document.getElementById("weather-humidity").textContent = `💧 습도: ${humidity}%`;
+        document.getElementById("weather-wind").textContent = `🌬️ 풍속: ${wind} m/s`;
+        document.getElementById("weather-rain").textContent = `☂️ 강수: ${rainTypeText} (${rainAmount}mm)`;
+
+      } catch (err) {
+        console.error("날씨 정보를 불러오는 중 오류 발생:", err);
+        document.getElementById("weather-to").innerHTML += "<p>날씨 정보를 가져올 수 없습니다.</p>";
+      }
+    }
+
+    loadWeatherData();
+    
+
     let map = new Tmapv2.Map("map-container", {
       center: new Tmapv2.LatLng(36.6256, 127.4545),
       width: "100%",
@@ -192,5 +260,40 @@
       pendingClick = null;
     });
   </script>
+  <script>
+  document.getElementById('getLocationBtn').addEventListener('click', function() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition, showError);
+  } else {
+    alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
+  }
+  });
+  let myLocationMarker; // 내 위치 마커 변수 (중복 마커 방지)
+  function showPosition(position) {
+  const lat = position.coords.latitude;
+  const lon = position.coords.longitude;
+
+  // 기존 마커가 있다면 제거
+  if (myLocationMarker) {
+    myLocationMarker.setMap(null);
+  }
+
+  // 내 위치에 마커 찍기
+  myLocationMarker = new Tmapv2.Marker({
+    position: new Tmapv2.LatLng(lat, lon),
+    map: map,
+    icon: "/static/cur_loc.png",
+    title: "내 위치"
+  });
+
+  // 지도 중심 이동
+  map.setCenter(new Tmapv2.LatLng(lat, lon));
+
+  alert(`현재 위치가 지도에 표시 되었습니다!`);
+  }
+  function showError(error) {
+  alert("위치 정보를 가져오는 데 실패했습니다.");
+  }
+</script>
 </body>
 </html>
