@@ -5,6 +5,7 @@
   <title>보행자 안전도 평가 지도</title>
   <link rel="stylesheet" href="{{ url_for('static', filename = 'style.css') }}">
   <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey="></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
@@ -18,9 +19,20 @@
           <li><a href="#point-a-map">지도</a></li>
           <li><a href="#weather">날씨</a></li>
           <li><a href="Score.html">점수표시</a></li>
-          <li>로그아웃</li>
+          <li><a href=""> </a>  </li>
+          <div id="logout">
+            <ul>
+              <form method="post" action="/logout">
+    
+                <button type="submit" id="no-button">
+                  <i class="fas fa-sign-out-alt"></i>
+                </button>
+              </form>
+            </ul>
+          </div>
         </ul>
       </div>
+
     </div>
   </header>
 
@@ -76,6 +88,8 @@
 
     let pendingClick = null;
 
+    //마우스 커서 올리면 위치가 어디인지 출력되게끔 (ex 사창사거리 )
+
     async function loadDangerPoints() {
       try {
         const response = await fetch("/danger-data");
@@ -85,6 +99,7 @@
           const lat = item["위도"];
           const lng = item["경도"];
           const danger = item["위험도"];
+          const location = item["지점명"];
 
           const dangerColors = {
             "아주 약함": "#4caf50",
@@ -98,12 +113,13 @@
 
           new Tmapv2.Marker({
             position: new Tmapv2.LatLng(lat, lng),
-            map: map
+            map: map,
+            title: location
           });
 
           new Tmapv2.InfoWindow({
             position: new Tmapv2.LatLng(lat, lng),
-            content: `<div style="color: ${color}; font-weight: bold;">${danger}</div>`,
+            content: `<div style="color: ${color}; white-space: nowrap; font-size: 15px; font-weight: bold;">${danger}</div>`,
             type: 2,
             map: map
           });

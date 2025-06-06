@@ -5,7 +5,6 @@ import subprocess
 from dotenv import load_dotenv
 from models import db, User
 import json
-import time
 
 load_dotenv()
 
@@ -18,12 +17,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 if not app.config['SQLALCHEMY_DATABASE_URI']:
-    raise ValueError("오류: DATABASE_URL 환경 변수가 .env 파일에 설정되지 않았습니다. MySQL 연결 문자열을 설정해주세요.")
+    raise ValueError("오류: DATABASE_URL 환경 변수가 .env 파일에 설정되지 않았습니다.")
 if not app.config['SECRET_KEY']:
     raise ValueError("오류: SECRET_KEY 환경 변수가 .env 파일에 설정되지 않았습니다.")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db.init_app(app)
 
 with app.app_context():
@@ -59,6 +57,11 @@ def login():
     if 'user_id' in flask_session:
         return redirect(url_for('homepage'))
     return render_template('LogInPage.html')
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    flask_session.clear()  # 세션 초기화
+    return redirect(url_for('login_page'))  # 로그인 페이지로 리디렉션
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -97,25 +100,20 @@ def signup():
 
 @app.route('/homepage', methods=['GET', 'POST'])
 def homepage():
+    if 'user_id' not in flask_session:
+        return redirect(url_for('login_page'))
     return render_template('homepage.html', tmap_app_key=TMAP_API_KEY)
 
 @app.route('/score')
 def score():
+    if 'user_id' not in flask_session:
+        return redirect(url_for('login_page'))
     return render_template('Score.html')
 
 def run_api_call():
     print("호출 시작")
-    result = subprocess.run(['python', 'Dataset/api_call.py'])
-    if result.returncode == 0:
-        print("api 호출성공")
-    else:
-        print("api 요청에 실패했습니다. api 서버 오류이므로 잠시 뒤에 다시 시도해주세요.")
-        """ retry = subprocess.run(['python', 'Dataset/api_call.py'])
-        if retry == 0:
-            print("재요청 성공")
-        else:
-            print("재요청 실패")
-            """
+    subprocess.run(['python', 'Dataset/api_call.py'])
+    print("api 호출됨")
 
 @app.route('/run-api-call')
 def manual_run():
@@ -132,6 +130,5 @@ if __name__ == "__main__":
     scheduler = BackgroundScheduler()
     scheduler.add_job(run_api_call, 'interval', hours=1)
     scheduler.start()
-    run_api_call()  # 앱 실행 즉시 수동으로 한번  실행
-
+    run_api_call()  # 앱 시작 시 1회 호출
     app.run(host='0.0.0.0', port=5001, debug=True, use_reloader=False)
