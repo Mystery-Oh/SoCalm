@@ -60,8 +60,8 @@ def login():
 
 @app.route('/logout', methods=['POST'])
 def logout():
-    flask_session.clear()  # 세션 초기화
-    return redirect(url_for('login_page'))  # 로그인 페이지로 리디렉션
+    flask_session.clear()  
+    return redirect(url_for('login_page')) 
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -130,5 +130,5 @@ if __name__ == "__main__":
     scheduler = BackgroundScheduler()
     scheduler.add_job(run_api_call, 'interval', hours=1)
     scheduler.start()
-    run_api_call()  # 앱 시작 시 1회 호출
+    run_api_call()  
     app.run(host='0.0.0.0', port=5001, debug=True, use_reloader=False)
