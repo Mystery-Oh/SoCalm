@@ -35,6 +35,9 @@
       <div style="display: flex; gap: 20px; flex-wrap: wrap;">
         <div id="map" style="flex: 2;">
           <h2>지도 클릭 후 제보하기</h2>
+
+          <button id="getLocationBtn" style="margin-bottom: 10px;"> 내 위치 보기</button>
+
           <div id="map-container" style="height: 700px;"></div>
         </div>
 
@@ -192,5 +195,40 @@
       pendingClick = null;
     });
   </script>
+  <script>
+  document.getElementById('getLocationBtn').addEventListener('click', function() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition, showError);
+  } else {
+    alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
+  }
+  });
+  let myLocationMarker; // 내 위치 마커 변수 (중복 마커 방지)
+  function showPosition(position) {
+  const lat = position.coords.latitude;
+  const lon = position.coords.longitude;
+
+  // 기존 마커가 있다면 제거
+  if (myLocationMarker) {
+    myLocationMarker.setMap(null);
+  }
+
+  // 내 위치에 마커 찍기
+  myLocationMarker = new Tmapv2.Marker({
+    position: new Tmapv2.LatLng(lat, lon),
+    map: map,
+    icon: "/static/cur_loc.png",
+    title: "내 위치"
+  });
+
+  // 지도 중심 이동
+  map.setCenter(new Tmapv2.LatLng(lat, lon));
+
+  alert(`현재 위치가 지도에 표시 되었습니다!`);
+  }
+  function showError(error) {
+  alert("위치 정보를 가져오는 데 실패했습니다.");
+  }
+</script>
 </body>
 </html>
