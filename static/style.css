@@ -222,7 +222,7 @@
 #up-to {
   position: fixed;
   right: 30px;
-  top: 80%;
+  top: 77%;
   width: 70px;              
   height: 70px;           
   background-color: white;
@@ -253,8 +253,8 @@
 
 #weather-to {
   position: fixed;
-  right: 40px;
-  top: 65%;
+  right: 0px;
+  top: 75%;
   width: 400px;
   height: 200px;
   background-color: white;
@@ -263,6 +263,7 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   padding: 20px;
   box-sizing: border-box;
+  border-radius: 50px;
 }
 
 .weather-box {
@@ -288,4 +289,36 @@
 #weather-nav li {
   margin-bottom: 15px;
   margin-top: -20px;
+}
+
+#getLocationBtn {
+  margin-top: 10px;
+  background-color: rgb(255, 179, 0);       
+  color: white;                   
+  padding: 10px 20px;             
+  border: none;                  
+  border-radius: 8px;             
+  font-size: 16px;               
+  cursor: pointer;                
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: 0.3s ease; 
+  text-align: center;
+  justify-content: center;
+}
+
+.glow-text {
+  text-align: center;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 5px #4CAF50, 0 0 10px #4CAF50, 0 0 20px #4CAF50;
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 5px #4CAF50, 0 0 10px #4CAF50, 0 0 20px #4CAF50;
+  }
+  to {
+    text-shadow: 0 0 10px #81C784, 0 0 20px #81C784, 0 0 30px #81C784;
+  }
 }

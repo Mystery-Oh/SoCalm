@@ -34,11 +34,11 @@
     <section id="point-a-map">
       <div style="display: flex; gap: 20px; flex-wrap: wrap;">
         <div id="map" style="flex: 2;">
-          <h2>지도 클릭 후 제보하기</h2>
-
-          <button id="getLocationBtn" style="margin-bottom: 10px;"> 내 위치 보기</button>
-
+          <h2 class="glow-text">지도를 클릭하여 위험지역을 제보해주세요👇</h2>
           <div id="map-container" style="height: 700px;"></div>
+          <div style="display: flex; justify-content: center;">
+          <button id="getLocationBtn">내 위치 GPS</button>
+          </div>
         </div>
 
         <div id="report" style="flex: 1; display: none;">
@@ -55,7 +55,7 @@
     </section>
 
     <div id="weather-to">
-      <h2 style="font-size: 20px;">오늘의 날씨   <img id="weather-icon" src="/static/default.jpg" alt="날씨 아이콘" style="width:30px; height:30px;" /></h2>
+      <h2 style="font-size: 20px;">오늘의 날씨<img id="weather-icon" src="/static/default.jpg" alt="날씨 아이콘" style="width:30px; height:30px;" /></h2>
       <div class="weather-box">
         <div id="weather-icon-box">
         </div>
@@ -73,7 +73,6 @@
     </div>
     
     
-
   <footer>
     <h2>SoCalm</h2>
     <p>This project is an open source project. Our team is composed of members from the Department of Computer Engineering and the Department of Software.</p>
@@ -88,7 +87,7 @@
         const data = await response.json();
 
         const firstKey = Object.keys(data)[0];
-        const weather = data[firstKey]["날씨"]["2000"]; 
+        const weather = data[firstKey]["날씨"]["2200"]; 
 
         const temperature = weather["T1H"]; // 기온
         const humidity = weather["REH"];   // 습도
@@ -259,8 +258,7 @@
       document.getElementById("report-form").reset();
       pendingClick = null;
     });
-  </script>
-  <script>
+
   document.getElementById('getLocationBtn').addEventListener('click', function() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition, showError);
@@ -268,6 +266,7 @@
     alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
   }
   });
+
   let myLocationMarker; // 내 위치 마커 변수 (중복 마커 방지)
   function showPosition(position) {
   const lat = position.coords.latitude;
@@ -282,7 +281,8 @@
   myLocationMarker = new Tmapv2.Marker({
     position: new Tmapv2.LatLng(lat, lon),
     map: map,
-    icon: "/static/cur_loc.png",
+    icon: "/static/location.png",
+    iconSize: new Tmapv2.Size(25, 25),
     title: "내 위치"
   });
 
@@ -294,6 +294,7 @@
   function showError(error) {
   alert("위치 정보를 가져오는 데 실패했습니다.");
   }
+
 </script>
 </body>
 </html>
