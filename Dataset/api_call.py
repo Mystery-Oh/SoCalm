@@ -4,6 +4,7 @@ from coord_converter import convert_to_grid
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+import sys
 
 load_dotenv()
 
@@ -44,7 +45,7 @@ with open(file_path, 'r', encoding='utf-8') as f:
         response = requests.get(url, params=params)
         api_data = response.json()
 
-        #print(api_data)
+        # print(api_data)
 
         # print(json.dumps(data, indent=2, ensure_ascii=False))  #전체 출력값 확인
 
@@ -79,6 +80,8 @@ print("danger.json 갱신 완료:", datetime.now())
 
 with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
+
 
 
 # 4. 다시 저장
