@@ -29,7 +29,7 @@ class FlaskTests(unittest.TestCase):
     def test_login_page_loads(self):
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'로그인', response.data)
+        self.assertIn('로그인', response.data)
 
     def test_signup_page(self):
         response = self.app.get('/signup')
@@ -43,7 +43,7 @@ class FlaskTests(unittest.TestCase):
         # 사전에 유저를 DB에 넣어둔 후
         response = self.post('/login', data={'username': 'testuser', 'password': 'correct_password'})
         assert response.status_code == 302  # redirect expected
-        assert b'환영합니다!' in response.data
+        assert '환영합니다!' in response.data
 
     def test_signup_password_mismatch(self): #회원가입 실패 테스트
         response = self.post('/signup', data={
@@ -52,7 +52,7 @@ class FlaskTests(unittest.TestCase):
             'password': '1234',
             'confirm_password': '5678'
         }, follow_redirects=True)
-        assert b'비밀번호가 일치하지 않습니다' in response.data
+        assert '비밀번호가 일치하지 않습니다' in response.data
 
     def test_danger_data_json(self):
         response = self.get('/danger-data')
