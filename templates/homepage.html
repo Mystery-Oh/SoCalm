@@ -12,24 +12,18 @@
   <header>
     <div class="header-container">
       <div id="socalm">
-        <a href="homepage.html"><img src="{{ url_for('static', filename='SOCALM.png') }}" height="100px" width="100px"></a>
+        <a href="/"><img src="{{ url_for('static', filename='SOCALM.png') }}" height="100px" width="100px"></a>
       </div>
       <div class="navigation">
         <ul>
-          <li><a href="#point-a-map">지도</a></li>
-          <li><a href="#weather">날씨</a></li>
-          <li><a href="Score.html">점수표시</a></li>
-          <li><a href=""> </a>  </li>
           <div id="logout">
-            <ul>
-              <form method="post" action="/logout">
-    
-                <button type="submit" id="no-button">
-                  <i class="fas fa-sign-out-alt"></i>
-                </button>
-              </form>
-            </ul>
+            <form method="post" action="/logout">
+              <button type="submit" id="no-button">
+                <i class="fas fa-sign-out-alt"></i>
+              </button>
+            </form>
           </div>
+
         </ul>
       </div>
 
@@ -40,7 +34,7 @@
     <section id="point-a-map">
       <div style="display: flex; gap: 20px; flex-wrap: wrap;">
         <div id="map" style="flex: 2;">
-          <h2>지도</h2>
+          <h2>지도 클릭 후 제보하기</h2>
           <div id="map-container" style="height: 700px;"></div>
         </div>
 
@@ -60,12 +54,6 @@
     <div id="up-to">
       <a href="#"><img src="{{ url_for('static', filename='SOCALM.png') }}" height="70px" width="70px"></a>
     </div>
-
-    <section id="weather">
-      <h2>날씨</h2>
-      <div id="container"></div>
-    </section>
-
   </main>
 
   <footer>
@@ -88,8 +76,6 @@
 
     let pendingClick = null;
 
-    //마우스 커서 올리면 위치가 어디인지 출력되게끔 (ex 사창사거리 )
-
     async function loadDangerPoints() {
       try {
         const response = await fetch("/danger-data");
@@ -102,14 +88,14 @@
           const location = item["지점명"];
 
           const dangerColors = {
-            "아주 약함": "#4caf50",
-            "약함": "#ffeb3b",
-            "보통": "#ff9800",
-            "위험": "#f44336",
-            "아주 위험": "#9c27b0"
+            "아주 약함": "#4caf50", //초록
+            "약함": "#ffeb3b", // 노랑
+            "보통": "#ff9800", // 주황색
+            "위험": "#f44336", // 빨강
+            "매우 위험": "#9c27b0" // 보라색
           };
 
-          const color = dangerColors[danger] || "#333";
+          const color = dangerColors[danger] || "#333"; // 검정색 
 
           new Tmapv2.Marker({
             position: new Tmapv2.LatLng(lat, lng),
@@ -205,35 +191,6 @@
       document.getElementById("report-form").reset();
       pendingClick = null;
     });
-
-    const weatherContainer = document.querySelector("#weather #container");
-
-    async function fetchWeather() {
-      const lat = 36.6256;
-      const lon = 127.4545;
-      const apiKey = ""; // 여기에 API 키 입력
-      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=kr`;
-
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-
-        const weatherHTML = `
-          <p><strong>지역:</strong> ${data.name}</p>
-          <p><strong>날씨:</strong> ${data.weather[0].description}</p>
-          <p><strong>온도:</strong> ${data.main.temp}°C</p>
-          <p><strong>습도:</strong> ${data.main.humidity}%</p>
-          <p><strong>풍속:</strong> ${data.wind.speed} m/s</p>
-        `;
-
-        weatherContainer.innerHTML = weatherHTML;
-      } catch (error) {
-        weatherContainer.innerHTML = "<p>날씨 정보를 불러오는 데 실패했습니다.</p>";
-        console.error("날씨 API 오류:", error);
-      }
-    }
-
-    fetchWeather();
   </script>
 </body>
 </html>

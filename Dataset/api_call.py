@@ -10,7 +10,7 @@ load_dotenv()
 
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 
-serviceKey = WEATHER_API_KEY # 본인의 서비스 키 입력
+serviceKey = WEATHER_API_KEY 
 
 now = datetime.now()
 
