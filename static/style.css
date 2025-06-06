@@ -7,7 +7,10 @@
   color: #2c5364;
   font-size: 17px;
   list-style: none;
-  margin-top: 15px;
+  margin-top: 10px;
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-left: auto;
 }
 
 .navigation ul {
@@ -60,7 +63,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
   }
  
   header h1 {
@@ -233,4 +235,21 @@
   display: flex;           
   justify-content: center;
   align-items: center;
+}
+
+#logout {
+  display: flex;
+  color: #2c5364;
+  font-size: 17px;
+  list-style: none;
+}
+
+#logout:hover {
+  color:hotpink;
+  cursor : pointer;
+}
+
+#no-button {
+  all: unset;
+  cursor: pointer;
 }
