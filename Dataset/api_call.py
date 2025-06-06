@@ -50,7 +50,7 @@ with open(file_path, 'r', encoding='utf-8') as f:
         # print(json.dumps(data, indent=2, ensure_ascii=False))  #전체 출력값 확인
 
         informations = {}
-        wanted_categories = ['T1H', 'PTY', 'SKY', 'LGT', 'WSD', 'RN1']  # 필터링할 항목
+        wanted_categories = ['T1H', 'PTY', 'SKY', 'LGT', 'WSD', 'RN1', 'REH', 'VEC']  # 필터링할 항목
 
         # 원하는 항목만 필터링
         for items in api_data['response']['body']['items']['item']:
