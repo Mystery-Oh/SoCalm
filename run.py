@@ -112,8 +112,17 @@ def score():
 
 def run_api_call():
     print("호출 시작")
-    subprocess.run(['python', 'Dataset/api_call.py'])
-    print("api 호출됨")
+    result = subprocess.run(['python', 'Dataset/api_call.py'])
+    if result.returncode == 0:
+        print("api 호출성공")
+    else:
+        print("api 요청에 실패했습니다. api 서버 오류일 수 있으니 잠시 뒤에 다시 시도해주세요.")
+        """ retry = subprocess.run(['python', 'Dataset/api_call.py'])
+        if retry == 0:
+            print("재요청 성공")
+        else:
+            print("재요청 실패")
+            """
 
 @app.route('/run-api-call')
 def manual_run():
