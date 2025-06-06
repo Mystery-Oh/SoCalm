@@ -250,3 +250,42 @@
   all: unset;
   cursor: pointer;
 }
+
+#weather-to {
+  position: fixed;
+  right: 40px;
+  top: 65%;
+  width: 400px;
+  height: 200px;
+  background-color: white;
+  color: #2c5364;
+  text-align: left;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.weather-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+#weather-temp-box {
+  flex: 1;
+}
+
+#weather-nav {
+  flex: 1;
+  text-align: right;
+}
+
+#weather-nav ul {
+  list-style: none;
+  margin: 0;
+}
+
+#weather-nav li {
+  margin-bottom: 15px;
+  margin-top: -20px;
+}
