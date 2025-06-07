@@ -52,7 +52,7 @@ pip3 install -r requirements.txt
 
 ### How to use  
 
-.env 파일 내부로 Tmap api키, 기상청 api키, MySQL연결 필요  
+.env 파일에 Tmap api키, 기상청 api키, MySQL연결 필요  
 
 ---
 
@@ -66,4 +66,4 @@ hyeongyu0117@naver.com
 
 ### License  
 
-
+`SoCalm`은 `modified MIT` 라이선스 하에 공개되어 있습니다. 모델 및 코드를 사용할 경우 라이선스 내용을 준수해주세요. 라이선스 전문은 `LICENSE` 파일에서 확인하실 수 있습니다.  
