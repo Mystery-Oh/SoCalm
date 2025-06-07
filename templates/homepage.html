@@ -4,150 +4,265 @@
   <meta charset="utf-8">
   <title>보행자 안전도 평가 지도</title>
   <link rel="stylesheet" href="{{ url_for('static', filename = 'style.css') }}">
-  <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=mJEPBHCoBK15mKPOthoG73z7SbzYeZCG8QoYlEx0"></script>
+  <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey={{ tmap_app_key }}"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
   <header>
     <div class="header-container">
-    <div id="socalm">
-      <a href="homepage.html"><img src="{{ url_for('static', filename='SOCALM.png') }}" height="100px" width="100px"></a>
-    </div>
+      <div id="socalm">
+        <a href="/"><img src="{{ url_for('static', filename='SOCALM.png') }}" height="100px" width="100px"></a>
+      </div>
+      <div class="navigation">
+        <ul>
+          <div id="logout">
+            <form method="post" action="/logout">
+              <button type="submit" id="no-button">
+                <i class="fas fa-sign-out-alt"></i>
+              </button>
+            </form>
+          </div>
 
-    <div class="navigation">
-      <ul>
-        <li><a href="#point-a-map">지도</a></li>
-        <li><a href="#wheather">날씨</a></li>
-        <li><a href="Score.html">점수표시</a></li>
-      </ul>
+        </ul>
+      </div>
+
     </div>
-   </div>
   </header>
 
   <main>
-   <section id="point-a-map">
-    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-      <div id="map" style="flex: 2;">
-        <h2>지도</h2>
-        <div id="map-container"></div>
+    <section id="point-a-map">
+      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div id="map" style="flex: 2;">
+          <h2 class="glow-text">지도를 클릭하여 위험지역을 제보해주세요👇</h2>
+          <div id="map-container" style="height: 700px;"></div>
+          <div style="display: flex; justify-content: center;">
+          <button id="getLocationBtn">내 위치 GPS</button>
+          </div>
+        </div>
+
+        <div id="report" style="flex: 1;">
+          <div class="close-btn" id="close-report">✕</div>
+          <h2>위험지역 제보</h2>
+          <form id="report-form" action="/report" method="post">
+            <label>위치명: <input type="text" name="location" required></label><br>
+            <label>설명: <textarea name="description" required></textarea></label><br>
+            <button type="submit">제보하기</button>
+            <button type="button" id="cancel-report">취소하기</button>
+          </form>
+        </div>
       </div>
-
-      <div id="report" style="flex: 1;">
-        <h2>위험지역 제보</h2>
-        <form id="report-form" action="/report" method="post">
-          <label>위치명: <input type="text" name="location"></label><br>
-          <label>설명: <textarea name="description"></textarea></label><br>  
-          <button type="submit">제보하기</button>
-          <button type="button" id="cancel-report">취소하기</button>
-        </form>
-      </div>
-    </div>
-   </section>
-
-    <div id="up-to">
-      <a href="#"><img src="{{ url_for('static', filename='SOCALM.png') }}" height="70px" width="70px"></a>
-    </div>
-
-    <section id="weather">
-      <h2>날씨</h2>
-      <div id="container"></div>
     </section>
 
-    <section id="about">
-      <h2>SoCalm</h2>
-      <p>This project is an open source project. Our team is composed of members from the Department of Computer Engineering and the Department of Software.</p>
-      <br>
-      <p style="font-size: 13px;">developers: (Oh-heeseung, Leejungjoo, Jang hyun gyu)</p>
-    </section>
-  </main>
-
+    <div id="weather-to">
+      <h2 style="font-size: 20px;">오늘의 날씨<img id="weather-icon" src="/static/default.jpg" alt="날씨 아이콘" style="width:30px; height:30px;" /></h2>
+      <div class="weather-box">
+        <div id="weather-icon-box">
+        </div>
+        <div id="weather-temp-box">
+          <h2 id="weather-temp"></h2>
+        </div>
+        <div id="weather-nav">
+          <ul>
+            <li><p id="weather-humidity"></p></li>
+            <li><p id="weather-wind"></p></li>
+            <li><p id="weather-rain"></p></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    
   <footer>
-    <p>&copy; Opensource Project : SOCALM</p>
+    <h2>SoCalm</h2>
+    <p>This project is an open source project. Our team is composed of members from the Department of Computer Engineering and the Department of Software.</p>
+    <p style="font-size: 13px;">developers: (Oh-heeseung, Leejungjoo, Jang hyun gyu)<a href="https://github.com/Mystery-Oh/SoCalm"><img src="{{ url_for('static', filename='Github.png') }}" height="40px" width="40px" style="margin-left: 25px;"></a></p>
+    <p>&copy; Opensource Project : SOCALM</p> <br />
   </footer>
 
   <script>
+  async function loadWeatherData() {
+      try {
+        const response = await fetch("/danger-data");
+        const data = await response.json();
+
+        const firstKey = Object.keys(data)[0];
+        const weather = data[firstKey]["날씨"]["2200"]; 
+
+        const temperature = weather["T1H"]; // 기온
+        const humidity = weather["REH"];   // 습도
+        const wind = weather["WSD"];       // 풍속
+        const rainType = weather["PTY"];   // 강수 형태
+        const rainAmount = weather["RN1"]; // 강수량
+
+        const rainTypeText = {
+          "0": "없음",
+          "1": "비",
+          "2": "비/눈",
+          "3": "눈",
+          "4": "소나기"
+        }[rainType] || "정보 없음";
+
+        let imageFile = "default.jpg";
+        if (rainType === "0") {
+          imageFile = "sunny.jpg";
+        } else if (rainType === "1") {
+          imageFile = "rainny.jpg";
+        } else if (rainType === "2") {
+          imageFile = "snowrain.jpg";
+        } else if (rainType === "3") {
+          imageFile = "snow.jpg";
+        } else if (rainType === "4") {
+          imageFile = "shower.jpg";
+        }
+
+        document.getElementById("weather-icon").src = `/static/${imageFile}`;
+        document.getElementById("weather-temp").textContent = `기온: ${temperature}℃`;
+        document.getElementById("weather-humidity").textContent = `💧 습도: ${humidity}%`;
+        document.getElementById("weather-wind").textContent = `🌬️ 풍속: ${wind} m/s`;
+        document.getElementById("weather-rain").textContent = `☂️ 강수: ${rainTypeText} (${rainAmount}mm)`;
+
+      } catch (err) {
+        console.error("날씨 정보를 불러오는 중 오류 발생:", err);
+        document.getElementById("weather-to").innerHTML += "<p>날씨 정보를 가져올 수 없습니다.</p>";
+      }
+    }
+
+    loadWeatherData();
+    
+
     let map = new Tmapv2.Map("map-container", {
       center: new Tmapv2.LatLng(36.6256, 127.4545),
       width: "100%",
-      height: "500px",
+      height: "700px",
       zoom: 16
     });
 
     const markers = [];
     const infoWindows = [];
 
-async function loadDangerPoints() {
-  try {
-    const response = await fetch("/danger-data");
-    const data = await response.json();
+    let pendingClick = null;
 
-    Object.values(data).forEach(item => {
-      const lat = item["위도"];
-      const lng = item["경도"];
-      const label = item["지점명"];
-      const danger = item["위험도"]?.trim(); 
-      const score = item["점수"];
+    async function loadDangerPoints() {
+      try {
+        const response = await fetch("/danger-data");
+        const data = await response.json();
 
-      const showDangerLevels = ["아주 약함", "약함", "보통", "위험", "아주 위험"];
-      if (!showDangerLevels.includes(danger)) return;
+        Object.values(data).forEach(item => {
+          const lat = item["위도"];
+          const lng = item["경도"];
+          const danger = item["위험도"];
+          const location = item["지점명"];
 
-      const marker = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(lat, lng),
-        map: map
-      });
+          const dangerColors = {
+            "아주 약함": "#4caf50", //초록
+            "약함": "#ffeb3b", // 노랑
+            "보통": "#ff9800", // 주황색
+            "위험": "#f44336", // 빨강
+            "매우 위험": "#9c27b0" // 보라색
+          };
 
-      const infoWindow = new Tmapv2.InfoWindow({
-        position: new Tmapv2.LatLng(lat, lng),
-        content: `<div style="background:white;padding:5px;border-radius:5px">
-                    위험도: ${danger}<br>
-                  </div>`,
-        
-        type: 2,
-        map: map
-      });
-    });
-  } catch (error) {
-    console.error("danger-data 불러오기 실패:", error);
-  }
-}
+          const color = dangerColors[danger] || "#333"; // 검정색 
 
-loadDangerPoints();
+          new Tmapv2.Marker({
+            position: new Tmapv2.LatLng(lat, lng),
+            map: map,
+            title: location
+          });
 
+          new Tmapv2.InfoWindow({
+            position: new Tmapv2.LatLng(lat, lng),
+            content: `<div style="color: ${color}; white-space: nowrap; font-size: 15px; font-weight: bold;">${danger}</div>`,
+            type: 2,
+            map: map
+          });
+        });
+      } catch (error) {
+        console.error("danger-data 불러오기 실패:", error);
+      }
+    }
+
+    loadDangerPoints();
 
     map.addListener("click", function (evt) {
+
       const lat = evt.latLng._lat;
       const lon = evt.latLng._lng;
 
-      const locationName = document.querySelector("input[name='location']").value.trim();
-      const description = document.querySelector("textarea[name='description']").value.trim();
+      pendingClick = { lat, lon };
 
-      if (!locationName || !description) {
-        alert("위치명과 설명을 입력한 후 지도를 클릭해주세요.");
-        return;
-      }
-
-      const marker = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(lat, lon),
-        map: map
-      });
-      markers.push(marker);
-
-      const infoWindow = new Tmapv2.InfoWindow({
-        position: new Tmapv2.LatLng(lat, lon),
-        content: `<div style="background:white;padding:5px;border-radius:5px"><strong>${locationName}</strong><br>${description}</div>`,
-        type: 2,
-        map: map
-      });
-      infoWindows.push(infoWindow);
-
-      map.setCenter(new Tmapv2.LatLng(lat, lon));
-
-      document.getElementById("report-form").reset();
+      const reportDiv = document.getElementById("report");
+      reportDiv.style.display = "block";
+      document.querySelector("input[name='location']").focus();
     });
 
-    document.getElementById("report-form").addEventListener("submit", function (e) {
-      e.preventDefault();
-      alert("왼쪽 지도를 클릭하여 제보 위치를 선택하세요.");
+    document.getElementById("report-form").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        if (!pendingClick) {
+            alert("지도를 클릭해서 위치를 먼저 선택해주세요.");
+            return;
+        }
+
+        const locationName = document.querySelector("input[name='location']").value.trim();
+        const description = document.querySelector("textarea[name='description']").value.trim();
+
+        if (!locationName || !description) {
+            alert("모든 항목을 입력해주세요.");
+            return;
+        }
+
+        const { lat, lon } = pendingClick;
+
+        const reportData = {
+            lat: lat,
+            lon: lon,
+            location: locationName,
+            description: description
+        };
+
+
+        try {
+            const response = await fetch('/report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(reportData),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(result.message);
+
+                const marker = new Tmapv2.Marker({
+                    position: new Tmapv2.LatLng(lat, lon),
+                    map: map
+                });
+                markers.push(marker);
+
+                const infoWindow = new Tmapv2.InfoWindow({
+                    position: new Tmapv2.LatLng(lat, lon),
+                    content: `<div style="background:white;padding:5px;border-radius:5px"><strong>${locationName}</strong><br>${description}</div>`,
+                    type: 2,
+                    map: map
+                });
+                infoWindows.push(infoWindow);
+
+                map.setCenter(new Tmapv2.LatLng(lat, lon));
+
+                document.getElementById("report-form").reset();
+                document.getElementById("report").style.display = "none";
+                pendingClick = null;
+                
+            } else { // 요청 실패
+                alert(`오류: ${result.message}`);
+            }
+        } catch (error) {
+            console.error('제보 전송 오류:', error);
+            alert('제보를 전송하는 중 오류가 발생했습니다.');
+        }
     });
 
     document.getElementById("cancel-report").addEventListener("click", function () {
@@ -162,39 +277,53 @@ loadDangerPoints();
       }
 
       document.getElementById("report-form").reset();
+      document.getElementById("report").style.display = "none";
+      pendingClick = null;
       alert("가장 최근의 제보가 취소되었습니다.");
-      
     });
 
-    const weatherContainer = document.querySelector("#weather #container");
+    document.getElementById("close-report").addEventListener("click", function () {
+      document.getElementById("report").style.display = "none";
+      document.getElementById("report-form").reset();
+      pendingClick = null;
+    });
 
-  async function fetchWeather() {
-    const lat = 36.6256;
-    const lon = 127.4545;
-    const apiKey = "";// 날씨 key 여기에 입력 
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=kr`;
+  document.getElementById('getLocationBtn').addEventListener('click', function() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition, showError);
+  } else {
+    alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
+  }
+  });
 
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
+  let myLocationMarker; // 내 위치 마커 변수 (중복 마커 방지)
+  function showPosition(position) {
+  const lat = position.coords.latitude;
+  const lon = position.coords.longitude;
 
-      const weatherHTML = `
-        <p><strong>지역:</strong> ${data.name}</p>
-        <p><strong>날씨:</strong> ${data.weather[0].description}</p>
-        <p><strong>온도:</strong> ${data.main.temp}°C</p>
-        <p><strong>습도:</strong> ${data.main.humidity}%</p>
-        <p><strong>풍속:</strong> ${data.wind.speed} m/s</p>
-      `;
-
-      weatherContainer.innerHTML = weatherHTML;
-    } catch (error) {
-      weatherContainer.innerHTML = "<p>날씨 정보를 불러오는 데 실패했습니다.</p>";
-      console.error("날씨 API 오류:", error);
-    }
+  // 기존 마커가 있다면 제거
+  if (myLocationMarker) {
+    myLocationMarker.setMap(null);
   }
 
-  fetchWeather();
-  </script>
+  // 내 위치에 마커 찍기
+  myLocationMarker = new Tmapv2.Marker({
+    position: new Tmapv2.LatLng(lat, lon),
+    map: map,
+    icon: "/static/location.png",
+    iconSize: new Tmapv2.Size(25, 25),
+    title: "내 위치"
+  });
 
+  // 지도 중심 이동
+  map.setCenter(new Tmapv2.LatLng(lat, lon));
+
+  alert(`현재 위치가 지도에 표시 되었습니다!`);
+  }
+  function showError(error) {
+  alert("위치 정보를 가져오는 데 실패했습니다.");
+  }
+
+</script>
 </body>
 </html>
