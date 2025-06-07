@@ -51,6 +51,18 @@ pip3 install -r requirements.txt
 ---
 
 ### How to use  
+![로그인](https://github.com/user-attachments/assets/eaf136fe-eed5-4980-941c-24cf1afdd995)  
+웹페이지 접속 후 로그인  
+아이디가 없다면 아이디가 없으신가요 클릭 후 회원가입  
+![회원가입](https://github.com/user-attachments/assets/1ef9ed19-c17f-4a27-9d8a-4a1bfcdfb687)  
+정보 입력 후 회원가입  
+<img width="529" alt="위험도" src="https://github.com/user-attachments/assets/b621b78c-72ee-4a69-a896-6e88a1cc2be7" />  
+지도에서 위험정보 확인 가능  
+지도에서 위치 클릭 시 위험지역 제보 가능  
+![제보](https://github.com/user-attachments/assets/6add0f31-a693-4a6d-b6e1-ee7c6038c152)  
+위험지역 클릭 뒤 내용 입력 후 제보하기  
+![제보완료](https://github.com/user-attachments/assets/3a44fdd8-4bdc-45b5-8647-88f27cc0f5fd)  
+제보 완료  
 
 .env 파일에 Tmap api키, 기상청 api키, MySQL연결 필요  
 run.py 실행
