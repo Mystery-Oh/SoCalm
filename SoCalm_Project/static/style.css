@@ -1,13 +1,9 @@
 .navigation{
   display: flex;
-  justify-content: flex-end;
-  gap: 40px;
-  padding: 10px;
-  padding-top: 0px;
   color: #2c5364;
   font-size: 17px;
   list-style: none;
-  margin-left: 1220px;
+  margin-left: 0;
 }
 
 .navigation ul {
@@ -30,7 +26,6 @@
 }
 
 #socalm{
-  padding-left: 40px;
   display: flex;
   align-items: center;
 }                    
@@ -56,10 +51,11 @@
 
   .header-container {
     width: 100%;
-    max-width: 1200px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 40px;
+    box-sizing: border-box;
   }
  
   header h1 {
@@ -101,7 +97,12 @@
     color: #007acc;
     margin-bottom: 15px;
   }
- 
+  
+  #map {
+    flex: 1;
+    min-width: 0;
+  }
+
   #container {
     width: 1000px;
     height: 500px;
