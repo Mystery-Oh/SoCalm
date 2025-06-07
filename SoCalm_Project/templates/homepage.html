@@ -34,11 +34,14 @@
     <section id="point-a-map">
       <div style="display: flex; gap: 20px; flex-wrap: wrap;">
         <div id="map" style="flex: 2;">
-          <h2>지도 클릭 후 제보하기</h2>
+          <h2 class="glow-text">지도를 클릭하여 위험지역을 제보해주세요👇</h2>
           <div id="map-container" style="height: 700px;"></div>
+          <div style="display: flex; justify-content: center;">
+          <button id="getLocationBtn">내 위치 GPS</button>
+          </div>
         </div>
 
-        <div id="report" style="flex: 1; display: none;">
+        <div id="report" style="flex: 1;">
           <div class="close-btn" id="close-report">✕</div>
           <h2>위험지역 제보</h2>
           <form id="report-form" action="/report" method="post">
@@ -52,7 +55,7 @@
     </section>
 
     <div id="weather-to">
-      <h2 style="font-size: 20px;">오늘의 날씨   <img id="weather-icon" src="/static/default.jpg" alt="날씨 아이콘" style="width:30px; height:30px;" /></h2>
+      <h2 style="font-size: 20px;">오늘의 날씨<img id="weather-icon" src="/static/default.jpg" alt="날씨 아이콘" style="width:30px; height:30px;" /></h2>
       <div class="weather-box">
         <div id="weather-icon-box">
         </div>
@@ -70,7 +73,6 @@
     </div>
     
     
-
   <footer>
     <h2>SoCalm</h2>
     <p>This project is an open source project. Our team is composed of members from the Department of Computer Engineering and the Department of Software.</p>
@@ -80,55 +82,72 @@
 
   <script>
   async function loadWeatherData() {
-      try {
-        const response = await fetch("/danger-data");
-        const data = await response.json();
+  try {
+    const response = await fetch("/danger-data");
+    const data = await response.json();
 
-        const firstKey = Object.keys(data)[0];
-        const weather = data[firstKey]["날씨"]["2000"]; 
+    const firstKey = Object.keys(data)[0];
+    const weatherData = data[firstKey]["날씨"];
 
-        const temperature = weather["T1H"]; // 기온
-        const humidity = weather["REH"];   // 습도
-        const wind = weather["WSD"];       // 풍속
-        const rainType = weather["PTY"];   // 강수 형태
-        const rainAmount = weather["RN1"]; // 강수량
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentTimeValue = currentHour * 100; 
 
-        const rainTypeText = {
-          "0": "없음",
-          "1": "비",
-          "2": "비/눈",
-          "3": "눈",
-          "4": "소나기"
-        }[rainType] || "정보 없음";
+    const weatherTimes = Object.keys(weatherData); 
+    let closestTime = weatherTimes[0];
+    let minDiff = Math.abs(parseInt(weatherTimes[0]) - currentTimeValue);
 
-        let imageFile = "default.jpg";
-        if (rainType === "0") {
-          imageFile = "sunny.jpg";
-        } else if (rainType === "1") {
-          imageFile = "rainny.jpg";
-        } else if (rainType === "2") {
-          imageFile = "snowrain.jpg";
-        } else if (rainType === "3") {
-          imageFile = "snow.jpg";
-        } else if (rainType === "4") {
-          imageFile = "shower.jpg";
-        }
-
-        document.getElementById("weather-icon").src = `/static/${imageFile}`;
-        document.getElementById("weather-temp").textContent = `기온: ${temperature}℃`;
-        document.getElementById("weather-humidity").textContent = `💧 습도: ${humidity}%`;
-        document.getElementById("weather-wind").textContent = `🌬️ 풍속: ${wind} m/s`;
-        document.getElementById("weather-rain").textContent = `☂️ 강수: ${rainTypeText} (${rainAmount}mm)`;
-
-      } catch (err) {
-        console.error("날씨 정보를 불러오는 중 오류 발생:", err);
-        document.getElementById("weather-to").innerHTML += "<p>날씨 정보를 가져올 수 없습니다.</p>";
+    for (let time of weatherTimes) {
+      const diff = Math.abs(parseInt(time) - currentTimeValue);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestTime = time;
       }
     }
 
-    loadWeatherData();
-    
+    const weather = weatherData[closestTime];
 
+    const temperature = weather["T1H"]; // 기온
+    const humidity = weather["REH"];   // 습도
+    const wind = weather["WSD"];       // 풍속
+    const rainType = weather["PTY"];   // 강수 형태
+    const rainAmount = weather["RN1"]; // 강수량
+
+    const rainTypeText = {
+      "0": "없음",
+      "1": "비",
+      "2": "비/눈",
+      "3": "눈",
+      "4": "소나기"
+    }[rainType] || "정보 없음";
+
+    let imageFile = "default.jpg";
+    if (rainType === "0") {
+      imageFile = "sunny.jpg";
+    } else if (rainType === "1") {
+      imageFile = "rainny.jpg";
+    } else if (rainType === "2") {
+      imageFile = "snowrain.jpg";
+    } else if (rainType === "3") {
+      imageFile = "snow.jpg";
+    } else if (rainType === "4") {
+      imageFile = "shower.jpg";
+    }
+    
+    document.getElementById("weather-icon").src = `/static/${imageFile}`;
+    document.getElementById("weather-temp").textContent = `기온: ${temperature}℃`;
+    document.getElementById("weather-humidity").textContent = `💧 습도: ${humidity}%`;
+    document.getElementById("weather-wind").textContent = `🌬️ 풍속: ${wind} m/s`;
+    document.getElementById("weather-rain").textContent = `☂️ 강수: ${rainTypeText} (${rainAmount}mm)`;
+
+  } catch (err) {
+    console.error("날씨 정보를 불러오는 중 오류 발생:", err);
+    document.getElementById("weather-to").innerHTML += "<p>날씨 정보를 가져올 수 없습니다.</p>";
+  }
+}
+
+loadWeatherData();
+    
     let map = new Tmapv2.Map("map-container", {
       center: new Tmapv2.LatLng(36.6256, 127.4545),
       width: "100%",
@@ -191,47 +210,76 @@
 
       const reportDiv = document.getElementById("report");
       reportDiv.style.display = "block";
-      reportDiv.scrollIntoView({ behavior: "smooth" });
       document.querySelector("input[name='location']").focus();
     });
 
-    document.getElementById("report-form").addEventListener("submit", function (e) {
-      e.preventDefault();
+    document.getElementById("report-form").addEventListener("submit", async function (e) {
+        e.preventDefault();
 
-      if (!pendingClick) {
-        alert("지도를 클릭해서 위치를 먼저 선택해주세요.");
-        return;
-      }
+        if (!pendingClick) {
+            alert("지도를 클릭해서 위치를 먼저 선택해주세요.");
+            return;
+        }
 
-      const locationName = document.querySelector("input[name='location']").value.trim();
-      const description = document.querySelector("textarea[name='description']").value.trim();
+        const locationName = document.querySelector("input[name='location']").value.trim();
+        const description = document.querySelector("textarea[name='description']").value.trim();
 
-      if (!locationName || !description) {
-        alert("모든 항목을 입력해주세요.");
-        return;
-      }
+        if (!locationName || !description) {
+            alert("모든 항목을 입력해주세요.");
+            return;
+        }
 
-      const { lat, lon } = pendingClick;
+        const { lat, lon } = pendingClick;
 
-      const marker = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(lat, lon),
-        map: map
-      });
-      markers.push(marker);
+        const reportData = {
+            lat: lat,
+            lon: lon,
+            location: locationName,
+            description: description
+        };
 
-      const infoWindow = new Tmapv2.InfoWindow({
-        position: new Tmapv2.LatLng(lat, lon),
-        content: `<div style="background:white;padding:5px;border-radius:5px"><strong>${locationName}</strong><br>${description}</div>`,
-        type: 2,
-        map: map
-      });
-      infoWindows.push(infoWindow);
 
-      map.setCenter(new Tmapv2.LatLng(lat, lon));
+        try {
+            const response = await fetch('/report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(reportData),
+            });
 
-      document.getElementById("report-form").reset();
-      document.getElementById("report").style.display = "none";
-      pendingClick = null;
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(result.message);
+
+                const marker = new Tmapv2.Marker({
+                    position: new Tmapv2.LatLng(lat, lon),
+                    map: map
+                });
+                markers.push(marker);
+
+                const infoWindow = new Tmapv2.InfoWindow({
+                    position: new Tmapv2.LatLng(lat, lon),
+                    content: `<div style="background:white;padding:5px;border-radius:5px"><strong>${locationName}</strong><br>${description}</div>`,
+                    type: 2,
+                    map: map
+                });
+                infoWindows.push(infoWindow);
+
+                map.setCenter(new Tmapv2.LatLng(lat, lon));
+
+                document.getElementById("report-form").reset();
+                document.getElementById("report").style.display = "none";
+                pendingClick = null;
+                
+            } else { // 요청 실패
+                alert(`오류: ${result.message}`);
+            }
+        } catch (error) {
+            console.error('제보 전송 오류:', error);
+            alert('제보를 전송하는 중 오류가 발생했습니다.');
+        }
     });
 
     document.getElementById("cancel-report").addEventListener("click", function () {
@@ -256,6 +304,43 @@
       document.getElementById("report-form").reset();
       pendingClick = null;
     });
-  </script>
+
+  document.getElementById('getLocationBtn').addEventListener('click', function() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition, showError);
+  } else {
+    alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
+  }
+  });
+
+  let myLocationMarker; // 내 위치 마커 변수 (중복 마커 방지)
+  function showPosition(position) {
+  const lat = position.coords.latitude;
+  const lon = position.coords.longitude;
+
+  // 기존 마커가 있다면 제거
+  if (myLocationMarker) {
+    myLocationMarker.setMap(null);
+  }
+
+  // 내 위치에 마커 찍기
+  myLocationMarker = new Tmapv2.Marker({
+    position: new Tmapv2.LatLng(lat, lon),
+    map: map,
+    icon: "/static/location.png",
+    iconSize: new Tmapv2.Size(25, 25),
+    title: "내 위치"
+  });
+
+  // 지도 중심 이동
+  map.setCenter(new Tmapv2.LatLng(lat, lon));
+
+  alert(`현재 위치가 지도에 표시 되었습니다!`);
+  }
+  function showError(error) {
+  alert("위치 정보를 가져오는 데 실패했습니다.");
+  }
+
+</script>
 </body>
 </html>
