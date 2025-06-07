@@ -53,6 +53,7 @@ pip3 install -r requirements.txt
 ### How to use  
 
 .env 파일에 Tmap api키, 기상청 api키, MySQL연결 필요  
+run.py 실행
 
 ---
 
