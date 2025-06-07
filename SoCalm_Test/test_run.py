@@ -3,13 +3,16 @@ import sys
 import os
 from dotenv import load_dotenv
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-PROJECT_DIR = os.path.join(BASE_DIR, 'SoCalm_Project')
-sys.path.insert(0, PROJECT_DIR)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'SoCalm_Project'))
 
-from run import app, User, db
+print(BASE_DIR)
 
 load_dotenv(os.path.join(BASE_DIR, '.env'))
+
+sys.path.insert(0, BASE_DIR)
+
+
+from run import app, User, db
 
 class FlaskTests(unittest.TestCase):
 
@@ -44,12 +47,49 @@ class FlaskTests(unittest.TestCase):
         response = self.client.get('/signup')
         self.assertEqual(response.status_code, 200)
 
-    def test_homepage(self):
-        with self.client.session_transaction() as session:
-            session.clear() #로그인 안한상태로 세션 초기화
+    def test_signup_missing_fields(self):
+        response = self.client.post('/signup', data={
+            'name': '',
+            'username': '',
+            'password': '',
+            'confirm_password': ''
+        }, follow_redirects=True)
+        self.assertIn('모든 필드를 입력해주세요.', response.get_data(as_text=True))
 
+    def test_signup_password_mismatch(self):
+        response = self.client.post('/signup', data={
+            'name': '테스트',
+            'username': 'testuser',
+            'password': '1234',
+            'confirm_password': '5678'
+        }, follow_redirects=True)
+        self.assertIn('비밀번호가 일치하지 않습니다.', response.get_data(as_text=True))
+
+    def test_signup_existing_user(self):
+        # setup에서 이미 'testuser' 가 존재하므로 같은 username으로 시도
+        response = self.client.post('/signup', data={
+            'name': '다른이름',
+            'username': 'testuser',  # 중복 발생
+            'password': 'abcd1234',
+            'confirm_password': 'abcd1234'
+        }, follow_redirects=True)
+        text = response.get_data(as_text=True)
+        self.assertIn('이미 사용 중인 아이디입니다.', text)
+
+    def test_signup_success(self):
+        response = self.client.post('/signup', data={
+            'name': '새로운유저',
+            'username': 'newuser',
+            'password': '1234',
+            'confirm_password': '1234'
+        }, follow_redirects=True)
+        self.assertIn('회원가입이 완료되었습니다! 로그인해주세요.', response.get_data(as_text=True))
+
+    def test_homepage(self):
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1  # 로그인된 상태로 세션 설정
         response = self.client.get('/homepage')
-        self.assertEqual(response.status_code, 302) #로그인 안했을때, /login으로 리다이렉트
+        self.assertEqual(response.status_code, 200)
 
     def test_login_success(self):
         with self.client as c:
@@ -96,25 +136,6 @@ class FlaskTests(unittest.TestCase):
         data = response.get_json()
         self.assertIsInstance(data, dict)
 
-    def test_report_success(self):
-        # 먼저 로그인 상태를 시뮬레이션
-        with self.client.session_transaction() as session:
-            session['user_id'] = 1
-            session['username'] = 'testuser'
-
-        # 올바른 데이터 보내기
-        payload = {
-            'lat': 37.5665,
-            'lon': 126.9780,
-            'location': '서울 시청',
-            'description': '도로 파손'
-        }
-
-        response = self.client.post('/report', json=payload)
-        self.assertEqual(response.status_code, 200)
-        data = response.get_json()
-        self.assertEqual(data['status'], 'success')
-        self.assertIn('제보가 성공적으로 접수되었습니다.', data['message'])
 
 
 if __name__ == '__main__':

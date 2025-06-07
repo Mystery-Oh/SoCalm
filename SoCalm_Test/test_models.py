@@ -3,13 +3,16 @@ import sys
 import os
 from dotenv import load_dotenv
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-PROJECT_DIR = os.path.join(BASE_DIR, 'SoCalm_Project')
-sys.path.insert(0, PROJECT_DIR)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'SoCalm_Project'))
+
+print(BASE_DIR)
+
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+
+sys.path.insert(0, BASE_DIR)
 
 from run import app, User, db
 
-load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 class FlaskTests(unittest.TestCase):
 

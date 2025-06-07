@@ -111,8 +111,10 @@ def score():
     return render_template('Score.html')
 
 def run_api_call():
+    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'SoCalm_Project'))
+    api_call_path = os.path.join(BASE_DIR, 'Dataset', 'api_call.py')
     print("호출 시작")
-    result = subprocess.run(['python', 'Dataset/api_call.py'])
+    result = subprocess.run(['python', api_call_path])
     if result.returncode == 0:
         print("api 호출성공")
     else:
