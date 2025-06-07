@@ -41,7 +41,7 @@
           </div>
         </div>
 
-        <div id="report" style="flex: 1; display: none;">
+        <div id="report" style="flex: 1;">
           <div class="close-btn" id="close-report">✕</div>
           <h2>위험지역 제보</h2>
           <form id="report-form" action="/report" method="post">
@@ -193,7 +193,6 @@
 
       const reportDiv = document.getElementById("report");
       reportDiv.style.display = "block";
-      reportDiv.scrollIntoView({ behavior: "smooth" });
       document.querySelector("input[name='location']").focus();
     });
 
