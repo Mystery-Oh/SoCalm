@@ -1,5 +1,6 @@
 import json
 
+
 def 점수계산(entry):
     try:
         사고건수 = int(entry["사고건수"])
@@ -42,6 +43,7 @@ def 점수계산(entry):
         print(f"점수 계산 오류: {e}")
         return 0
 
+
 def 위험도분류(score):
     if score <= 30:
         return "아주 약함"
@@ -54,16 +56,17 @@ def 위험도분류(score):
     else:
         return "매우 위험"
 
+
 def main():
     input_file = "markingData.json"
     output_file = "markingData_scored.json"
 
     try:
         with open(input_file, "r", encoding="utf-8") as infile, \
-             open(output_file, "w", encoding="utf-8") as outfile:
+                open(output_file, "w", encoding="utf-8") as outfile:
 
             for line in infile:
-                data = json.loads(line) 
+                data = json.loads(line)
 
                 for id_, entry in data.items():
                     score = 점수계산(entry)
@@ -73,7 +76,6 @@ def main():
 
                     print(f"{entry['지점명']} → 점수: {score}점, 위험도: {danger}")
 
-                 
                     json.dump({id_: entry}, outfile, ensure_ascii=False)
                     outfile.write("\n")
 
@@ -81,6 +83,7 @@ def main():
 
     except Exception as e:
         print(f"오류: {e}")
+
 
 if __name__ == "__main__":
     main()

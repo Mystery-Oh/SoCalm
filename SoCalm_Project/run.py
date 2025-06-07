@@ -131,7 +131,9 @@ def manual_run():
 
 @app.route('/danger-data')
 def danger_data():
-    with open('algorithms/danger.json', 'r', encoding='utf-8') as f:
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # run.py가 있는 디렉토리 기준
+    file_path = os.path.join(BASE_DIR, 'algorithms', 'danger.json')
+    with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
     return jsonify(data)
 
