@@ -1,7 +1,7 @@
 import json
 
-input_path = "algorithms/danger.json"
-output_path = "algorithms/danger_fixed.json"
+input_path = "danger.json"
+output_path = "danger_fixed.json"
 
 merged_data = {}
 
