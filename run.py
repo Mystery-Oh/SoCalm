@@ -135,6 +135,15 @@ def danger_data():
         data = json.load(f)
     return jsonify(data)
 
+# 로그아웃 후 뒤로가기로 웹페이지 접근 방지용
+@app.after_request
+def add_no_cache_headers(response):
+    if request.endpoint != 'static':
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    return response
+
 if __name__ == "__main__":
     scheduler = BackgroundScheduler()
     scheduler.add_job(run_api_call, 'interval', hours=1)
