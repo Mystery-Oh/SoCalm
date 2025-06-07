@@ -45,8 +45,11 @@ class FlaskTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_homepage(self):
+        with self.client.session_transaction() as session:
+            session.clear() #로그인 안한상태로 세션 초기화
+
         response = self.client.get('/homepage')
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302) #로그인 안했을때, /login으로 리다이렉트
 
     def test_login_success(self):
         with self.client as c:
@@ -92,6 +95,26 @@ class FlaskTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.get_json()
         self.assertIsInstance(data, dict)
+
+    def test_report_success(self):
+        # 먼저 로그인 상태를 시뮬레이션
+        with self.client.session_transaction() as session:
+            session['user_id'] = 1
+            session['username'] = 'testuser'
+
+        # 올바른 데이터 보내기
+        payload = {
+            'lat': 37.5665,
+            'lon': 126.9780,
+            'location': '서울 시청',
+            'description': '도로 파손'
+        }
+
+        response = self.client.post('/report', json=payload)
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertEqual(data['status'], 'success')
+        self.assertIn('제보가 성공적으로 접수되었습니다.', data['message'])
 
 
 if __name__ == '__main__':
