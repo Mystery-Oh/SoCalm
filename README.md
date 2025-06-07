@@ -34,6 +34,8 @@
 
 * requirements.txt 참고.  
 
+---
+
 #### How to install  
 
 Clone & Install  
@@ -50,6 +52,8 @@ pip3 install -r requirements.txt
 ### How to use  
 
 .env 파일 내부로 Tmap api키, 기상청 api키, MySQL연결 필요  
+
+---
 
 ### Contacts  
 
