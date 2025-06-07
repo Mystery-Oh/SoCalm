@@ -2,10 +2,14 @@ import unittest
 import sys
 import os
 from dotenv import load_dotenv
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+PROJECT_DIR = os.path.join(BASE_DIR, 'SoCalm_Project')
+sys.path.insert(0, PROJECT_DIR)
+
 from run import app, User, db
 
-load_dotenv()
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 class FlaskTests(unittest.TestCase):
 
@@ -87,7 +91,7 @@ class FlaskTests(unittest.TestCase):
         response = self.client.get('/danger-data')
         self.assertEqual(response.status_code, 200)
         data = response.get_json()
-        self.assertisinstance(data, dict)
+        self.assertIsInstance(data, dict)
 
 
 if __name__ == '__main__':

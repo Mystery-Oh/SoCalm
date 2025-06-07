@@ -1,19 +1,19 @@
 import unittest
 import os
 import json
-from datetime import datetime
 import sys
 
 base_dir = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(base_dir)
 
-from Dataset.coord_converter import convert_to_grid
 
 class WeatherAPITest(unittest.TestCase):
 
     def test_danger_json_update(self):
-        base_dir = os.path.dirname(os.path.dirname(__file__))
-        file_path = os.path.join(base_dir, 'algorithms', 'danger.json')
+        base_dir = os.path.dirname(os.path.dirname(__file__))  # SoCalm_Project
+        project_dir = os.path.join(base_dir, 'SoCalm_Project')  # Project 디렉토리
+
+        file_path = os.path.join(project_dir, 'algorithms', 'danger.json')
 
         with open(file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
