@@ -56,10 +56,9 @@ pip3 install -r requirements.txt
 아이디가 없다면 아이디가 없으신가요 클릭 후 회원가입  
 ![회원가입](https://github.com/user-attachments/assets/1ef9ed19-c17f-4a27-9d8a-4a1bfcdfb687)  
 정보 입력 후 회원가입  
-![위험도]("https://github.com/user-attachments/assets/5fcb4be5-475b-4361-a492-8a67d0f78b07")  
+![제보](https://github.com/user-attachments/assets/6add0f31-a693-4a6d-b6e1-ee7c6038c152)  
 지도에서 위험정보 확인 가능  
 지도에서 위치 클릭 시 위험지역 제보 가능  
-![제보](https://github.com/user-attachments/assets/6add0f31-a693-4a6d-b6e1-ee7c6038c152)  
 위험지역 클릭 뒤 내용 입력 후 제보하기  
 ![제보완료](https://github.com/user-attachments/assets/3a44fdd8-4bdc-45b5-8647-88f27cc0f5fd)  
 제보 완료  
