@@ -3,7 +3,7 @@ import os
 from apscheduler.schedulers.background import BackgroundScheduler
 import subprocess
 from dotenv import load_dotenv
-from models import db, User
+from models import db, User, Report
 import json
 
 load_dotenv()
@@ -134,6 +134,52 @@ def danger_data():
     with open('algorithms/danger.json', 'r', encoding='utf-8') as f:
         data = json.load(f)
     return jsonify(data)
+
+# 로그아웃 후 뒤로가기로 웹페이지 접근 방지용
+@app.after_request
+def add_no_cache_headers(response):
+    if request.endpoint != 'static':
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    return response
+
+@app.route('/report', methods=['POST'])
+def report():
+    # 로그인한 사용자인지 확인
+    if 'user_id' not in flask_session:
+        return jsonify({'status': 'error', 'message': '로그인이 필요합니다.'}), 401
+
+    # 사용자가 보낸 제보 데이터 받기
+    data = request.get_json()
+    if not data:
+        return jsonify({'status': 'error', 'message': '잘못된 요청입니다.'}), 400
+
+    lat = data.get('lat')
+    lon = data.get('lon')
+    location = data.get('location')
+    description = data.get('description')
+    user_id = flask_session['user_id']
+
+    if not all([lat, lon, location, description]):
+        return jsonify({'status': 'error', 'message': '모든 필드를 입력해주세요.'}), 400
+
+    # 데이터베이스에 저장
+    try:
+        new_report = Report(
+            latitude=lat,
+            longitude=lon,
+            location=location,
+            description=description,
+            user_id=user_id
+        )
+        db.session.add(new_report)
+        db.session.commit()
+        return jsonify({'status': 'success', 'message': '제보가 성공적으로 접수되었습니다.'})
+    except Exception as e:
+        db.session.rollback()
+        print(f"DB 저장 오류: {e}")
+        return jsonify({'status': 'error', 'message': '제보 처리 중 오류가 발생했습니다.'}), 500
 
 if __name__ == "__main__":
     scheduler = BackgroundScheduler()

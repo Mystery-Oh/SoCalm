@@ -196,43 +196,73 @@
       document.querySelector("input[name='location']").focus();
     });
 
-    document.getElementById("report-form").addEventListener("submit", function (e) {
-      e.preventDefault();
+    document.getElementById("report-form").addEventListener("submit", async function (e) {
+        e.preventDefault();
 
-      if (!pendingClick) {
-        alert("지도를 클릭해서 위치를 먼저 선택해주세요.");
-        return;
-      }
+        if (!pendingClick) {
+            alert("지도를 클릭해서 위치를 먼저 선택해주세요.");
+            return;
+        }
 
-      const locationName = document.querySelector("input[name='location']").value.trim();
-      const description = document.querySelector("textarea[name='description']").value.trim();
+        const locationName = document.querySelector("input[name='location']").value.trim();
+        const description = document.querySelector("textarea[name='description']").value.trim();
 
-      if (!locationName || !description) {
-        alert("모든 항목을 입력해주세요.");
-        return;
-      }
+        if (!locationName || !description) {
+            alert("모든 항목을 입력해주세요.");
+            return;
+        }
 
-      const { lat, lon } = pendingClick;
+        const { lat, lon } = pendingClick;
 
-      const marker = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(lat, lon),
-        map: map
-      });
-      markers.push(marker);
+        const reportData = {
+            lat: lat,
+            lon: lon,
+            location: locationName,
+            description: description
+        };
 
-      const infoWindow = new Tmapv2.InfoWindow({
-        position: new Tmapv2.LatLng(lat, lon),
-        content: `<div style="background:white;padding:5px;border-radius:5px"><strong>${locationName}</strong><br>${description}</div>`,
-        type: 2,
-        map: map
-      });
-      infoWindows.push(infoWindow);
 
-      map.setCenter(new Tmapv2.LatLng(lat, lon));
+        try {
+            const response = await fetch('/report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(reportData),
+            });
 
-      document.getElementById("report-form").reset();
-      document.getElementById("report").style.display = "none";
-      pendingClick = null;
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(result.message);
+
+                const marker = new Tmapv2.Marker({
+                    position: new Tmapv2.LatLng(lat, lon),
+                    map: map
+                });
+                markers.push(marker);
+
+                const infoWindow = new Tmapv2.InfoWindow({
+                    position: new Tmapv2.LatLng(lat, lon),
+                    content: `<div style="background:white;padding:5px;border-radius:5px"><strong>${locationName}</strong><br>${description}</div>`,
+                    type: 2,
+                    map: map
+                });
+                infoWindows.push(infoWindow);
+
+                map.setCenter(new Tmapv2.LatLng(lat, lon));
+
+                document.getElementById("report-form").reset();
+                document.getElementById("report").style.display = "none";
+                pendingClick = null;
+                
+            } else { // 요청 실패
+                alert(`오류: ${result.message}`);
+            }
+        } catch (error) {
+            console.error('제보 전송 오류:', error);
+            alert('제보를 전송하는 중 오류가 발생했습니다.');
+        }
     });
 
     document.getElementById("cancel-report").addEventListener("click", function () {
