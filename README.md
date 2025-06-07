@@ -59,9 +59,9 @@ run.py 실행
 
 ### Contacts  
 
-dghmltmd2760@gmail.com  
-leezungzoo@gmail.com  
-hyeongyu0117@naver.com  
+오희승 dghmltmd2760@gmail.com  
+이정주 leezungzoo@gmail.com  
+장현규 hyeongyu0117@naver.com  
 
 ---
 
