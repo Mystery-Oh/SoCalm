@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <title>보행자 안전도 평가 지도</title>
+  <title>고령보행자 안전도 평가 지도</title>
   <link rel="stylesheet" href="{{ url_for('static', filename = 'style.css') }}">
   <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey={{ tmap_app_key }}"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -160,44 +160,58 @@ loadWeatherData();
 
     let pendingClick = null;
 
-    async function loadDangerPoints() {
-      try {
-        const response = await fetch("/danger-data");
-        const data = await response.json();
+async function loadDangerPoints() {
+  try {
+    const response = await fetch("/danger-data");
+    const data = await response.json();
 
-        Object.values(data).forEach(item => {
-          const lat = item["위도"];
-          const lng = item["경도"];
-          const danger = item["위험도"];
-          const location = item["지점명"];
+    Object.values(data).forEach(item => {
+      const lat = item["위도"];
+      const lng = item["경도"];
+      const danger = item["위험도"];
+      const location = item["지점명"];
+      const sago = item["사고종류"];
 
-          const dangerColors = {
-            "아주 약함": "#4caf50", //초록
-            "약함": "#ffeb3b", // 노랑
-            "보통": "#ff9800", // 주황색
-            "위험": "#f44336", // 빨강
-            "매우 위험": "#9c27b0" // 보라색
-          };
+      const dangerColors = {
+        "아주 약함": "#4caf50", //초록
+        "약함": "#ffeb3b", // 노랑
+        "보통": "#ff9800", // 주황색
+        "위험": "#f44336", // 빨강
+        "매우 위험": "#9c27b0" // 보라색
+      };
 
-          const color = dangerColors[danger] || "#333"; // 검정색 
+      const color = dangerColors[danger] || "#333"; // 검정색 
 
-          new Tmapv2.Marker({
-            position: new Tmapv2.LatLng(lat, lng),
-            map: map,
-            title: location
-          });
-
-          new Tmapv2.InfoWindow({
-            position: new Tmapv2.LatLng(lat, lng),
-            content: `<div style="color: ${color}; white-space: nowrap; font-size: 15px; font-weight: bold;">${danger}</div>`,
-            type: 2,
-            map: map
-          });
-        });
-      } catch (error) {
-        console.error("danger-data 불러오기 실패:", error);
+      // 사고종류에 따른 아이콘 이미지 경로 지정 (static 폴더 기준)
+      let iconPath = "";
+      if (sago === "JAYWALKING") {
+        iconPath = "/static/jaywalk.png";
+      } else if (sago === "OLDMAN") {
+        iconPath = "/static/oldman.png";
+      } else {
+        iconPath = "/static/default.png"; // 기본 아이콘 (필요시)
       }
-    }
+
+      new Tmapv2.Marker({
+        position: new Tmapv2.LatLng(lat, lng),
+        map: map,
+        title: location,
+        icon: iconPath,
+        iconSize: new Tmapv2.Size(25, 25),
+      });
+
+      new Tmapv2.InfoWindow({
+        position: new Tmapv2.LatLng(lat, lng),
+        content: `<div style="color: ${color}; white-space: nowrap; font-size: 15px; font-weight: bold;">${danger}</div>`,
+        type: 2,
+        map: map
+      });
+    });
+  } catch (error) {
+    console.error("danger-data 불러오기 실패:", error);
+  }
+}
+
 
     loadDangerPoints();
 
