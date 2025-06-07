@@ -1,6 +1,11 @@
 from flask import Flask, render_template
 import os
 from dotenv import load_dotenv
+import json
+from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, request, jsonify
+
+
 
 load_dotenv()
 
@@ -19,6 +24,13 @@ def signup():
 @app.route('/homepage')
 def homepage():
     return render_template('homepage.html')
+
+@app.route("/danger-data")
+def danger_data():
+    with open("algorithms/danger_fixed.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return jsonify(data)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)

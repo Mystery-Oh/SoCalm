@@ -13,7 +13,7 @@ def 점수계산(entry):
         WSD = float(날씨정보["WSD"])
         RN1 = float(날씨정보["RN1"])
 
-        점수 = 사고건수 * 1 + 사망자수 * 7 + 중상자수 * 5 + 경상자수 * 2
+        점수 = 사고건수 * 1 + 사망자수 * 15 + 중상자수 * 7 + 경상자수 * 5
 
         if PTY == 1:
             점수 += 10
@@ -43,7 +43,7 @@ def 점수계산(entry):
         return 0
 
 def 위험도분류(score):
-    if score <= 50:
+    if score <= 30:
         return "아주 약함"
     elif score <= 100:
         return "약함"
@@ -63,7 +63,7 @@ def main():
              open(output_file, "w", encoding="utf-8") as outfile:
 
             for line in infile:
-                data = json.loads(line)  # 줄 단위 JSON 객체
+                data = json.loads(line) 
 
                 for id_, entry in data.items():
                     score = 점수계산(entry)
@@ -73,14 +73,14 @@ def main():
 
                     print(f"{entry['지점명']} → 점수: {score}점, 위험도: {danger}")
 
-                    # 한 줄로 저장
+                 
                     json.dump({id_: entry}, outfile, ensure_ascii=False)
                     outfile.write("\n")
 
-        print(f"\n✅ 저장 완료: {output_file}")
+        print(f"\n 저장 완료: {output_file}")
 
     except Exception as e:
-        print(f"❌ 오류: {e}")
+        print(f"오류: {e}")
 
 if __name__ == "__main__":
     main()
