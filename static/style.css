@@ -117,9 +117,7 @@
   padding: 15px;
   border: 1px solid #ccc;
   border-radius: 10px;
-  z-index: 999;
   width: 350px;
-
   display: none;
   top: 350px;
   left: 100px;
