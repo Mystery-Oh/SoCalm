@@ -63,6 +63,7 @@ pip3 install -r requirements.txt
 ![제보완료](https://github.com/user-attachments/assets/3a44fdd8-4bdc-45b5-8647-88f27cc0f5fd)  
 제보 완료  
 
+**직접 실행을 할 경우**  
 .env 파일에 Tmap api키, 기상청 api키, MySQL연결 필요  
 run.py 실행
 
