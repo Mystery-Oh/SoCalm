@@ -24,8 +24,9 @@ class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
-    status = db.Column(db.String(255), nullable=False)
+    status = db.Column(db.String(255), nullable=False, default='제보 접수됨')
     location = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.String(500), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __repr__(self):
