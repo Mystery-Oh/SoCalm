@@ -1,4 +1,4 @@
-# da_design_server- [Project summary](#da_design_server)
+# SoCalm- [Project summary](#SoCalm)
   - [Purpose](#purpose)
   - [Schedule](#schedule)
   - [Requirements](#requirements)
@@ -16,8 +16,9 @@
 #### Purpose
 
 자율주행 차량의 경로 최적화의 일부분으로 사용 될 수 있다. 
-- 자율주행에서의 핵심은 보행자 안전이기 때문.
-보행자 교통사고 사망자는 차량사고 사망자에 비해 압도적으로 많다. 그래서 보행자 교통사고의 예방을 위해 이 프로젝트를 선택했다. 
+자율주행에서의 핵심은 보행자 안전이기 때문.
+보행자 교통사고 사망자는 차량사고 사망자에 비해 압도적으로 많다.
+그래서 보행자 교통사고의 예방을 위해 이 프로젝트를 선택했다.
 
 ### Schedule
 
@@ -48,16 +49,16 @@ pip3 install -r requirements.txt
 
 ### How to use
 
-TODO
-
----
+.env 파일 내부로 Tmap api키, 기상청 api키, mysql연결 필요
 
 ### Contacts
 
 dghmltmd2760@gmail.com
+leezungzoo@gmail.com
+hyeongyu0117@naver.com
 
 ---
 
 ### License
 
-Apache-2.0
+
